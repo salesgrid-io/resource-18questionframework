@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Get Your Results — Ascend Content</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --yellow: #b59e5f;
+      --yellow-dark: #8b7a45;
+      --black: #04070d;
+      --white: #ffffff;
+      --off-white: #04070d;
+      --gray-200: #35281e;
+      --gray-400: rgba(255,255,255,0.35);
+      --gray-600: rgba(255,255,255,0.55);
+    }
+
+    html, body {
+      min-height: 100%;
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--off-white);
+      color: var(--white);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Progress Bar (full) ── */
+    .progress-bar-track {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: var(--gray-200);
+      z-index: 100;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      width: 100%;
+      background: var(--yellow);
+    }
+
+    /* ── Layout ── */
+    .page {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 80px 24px 60px;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 560px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    /* ── Badge ── */
+    .badge {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--yellow-dark);
+      margin-bottom: 16px;
+    }
+
+    /* ── Headline ── */
+    .headline {
+      font-size: clamp(28px, 5vw, 42px);
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      color: var(--white);
+      margin-bottom: 14px;
+    }
+
+    /* ── Subtext ── */
+    .subtext {
+      font-size: clamp(15px, 2vw, 17px);
+      font-weight: 400;
+      line-height: 1.6;
+      color: var(--gray-600);
+      max-width: 440px;
+      margin-bottom: 40px;
+    }
+
+    /* ── Form ── */
+    .form {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 16px 18px;
+      background: var(--gray-100, #0d0a07);
+      border: 1.5px solid var(--gray-200);
+      border-radius: 12px;
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 400;
+      color: var(--white);
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    .form-input::placeholder {
+      color: var(--gray-400);
+    }
+
+    .form-input:focus {
+      border-color: var(--yellow);
+    }
+
+    /* ── Social divider ── */
+    .social-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--gray-400);
+      margin-top: 8px;
+      margin-bottom: 4px;
+    }
+
+    /* ── Submit ── */
+    .submit-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      background: linear-gradient(135deg, #b59e5f 0%, #d4c08a 50%, #8b7a45 100%);
+      box-shadow: 0 4px 20px rgba(181,158,95,0.3), inset 0 1px 0 rgba(255,255,255,0.15);
+      color: #0a0a0a;
+      font-family: inherit;
+      font-size: 17px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      padding: 18px 40px;
+      border-radius: 100px;
+      border: none;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 8px;
+      transition: background 0.15s, transform 0.1s;
+    }
+
+    .submit-btn:hover { box-shadow: 0 6px 24px rgba(181,158,95,0.45); }
+    .submit-btn:active { transform: scale(0.99); }
+
+    .submit-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* ── Error ── */
+    .error-msg {
+      font-size: 13px;
+      color: #c0392b;
+      display: none;
+      margin-top: -4px;
+    }
+
+    /* ── Mobile ── */
+    @media (max-width: 480px) {
+      .submit-btn { font-size: 15px; padding: 16px 28px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="progress-bar-track">
+    <div class="progress-bar-fill"></div>
+  </div>
+
+  <div class="page">
+    <div class="card">
+
+      <div class="badge">Almost There</div>
+      <h1 class="headline">Let's personalize your results</h1>
+      <p class="subtext">Add your profiles so we can tailor your breakdown and show you exactly where the opportunities are</p>
+
+      <form class="form" id="optin-form" novalidate>
+        <input class="form-input" type="text"  id="firstName" name="firstName" placeholder="Your first name" autocomplete="given-name" required />
+        <input class="form-input" type="email" id="email"     name="email"     placeholder="Your email" autocomplete="email" required />
+        <input class="form-input" type="tel"   id="phone"     name="phone"     placeholder="Phone (we'll text you your results too)" autocomplete="tel" />
+        <input class="form-input" type="url"   id="website"   name="website"   placeholder="Your website URL *" autocomplete="url" />
+
+        <div class="social-label">Add at least one social profile</div>
+
+        <input class="form-input" type="text" id="instagram" name="instagram" placeholder="Instagram handle (optional)" />
+        <input class="form-input" type="url"  id="linkedin"  name="linkedin"  placeholder="LinkedIn URL (optional)" />
+        <input class="form-input" type="url"  id="youtube"   name="youtube"   placeholder="YouTube channel URL (optional)" />
+
+        <div class="error-msg" id="error-msg">Please fill in your name and email to continue.</div>
+
+        <button type="submit" class="submit-btn" id="submit-btn">
+          See My Score →
+        </button>
+      </form>
+
+    </div>
+  </div>
+
+  <script>
+    // Pull score from URL
+    const params = new URLSearchParams(window.location.search);
+    const score = params.get('score') || '0';
+    const raw   = params.get('raw')   || '0';
+    const max   = params.get('max')   || '0';
+
+    document.getElementById('optin-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const errorEl = document.getElementById('error-msg');
+      const btn = document.getElementById('submit-btn');
+
+      const firstName = document.getElementById('firstName').value.trim();
+      const email     = document.getElementById('email').value.trim();
+
+      if (!firstName || !email) {
+        errorEl.style.display = 'block';
+        return;
+      }
+      errorEl.style.display = 'none';
+
+      const payload = {
+        firstName,
+        email,
+        phone:     document.getElementById('phone').value.trim(),
+        website:   document.getElementById('website').value.trim(),
+        instagram: document.getElementById('instagram').value.trim(),
+        linkedin:  document.getElementById('linkedin').value.trim(),
+        youtube:   document.getElementById('youtube').value.trim(),
+        score, raw, max,
+        source: 'ascend-brand-diagnostic',
+      };
+
+      btn.disabled = true;
+      btn.textContent = 'Loading...';
+
+      try {
+        await fetch('https://hooks.zapier.com/hooks/catch/placeholder/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+          mode: 'no-cors',
+        }).catch(() => {});
+      } catch (_) {}
+
+      // Redirect to loading screen
+      window.location.href = `loading.html?score=${score}&raw=${raw}&max=${max}&name=${encodeURIComponent(firstName)}`;
+    });
+  </script>
+</body>
+</html>
