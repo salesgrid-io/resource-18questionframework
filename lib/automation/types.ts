@@ -9,6 +9,7 @@ export type FunnelScreen =
   | "disqualified"
   | "booking"
   | "complete"
+  | "generating"
 
 export type FunnelEventType =
   | "landing_viewed"
