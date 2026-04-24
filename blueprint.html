@@ -1,0 +1,1544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brand Blueprint — Jaylen</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #06090F;
+    --bg-elevated: #0C1017;
+    --gold: #C4A855;
+    --gold-soft: #D4BD7A;
+    --gold-dim: rgba(196,168,85,0.12);
+    --gold-border: rgba(196,168,85,0.2);
+    --text: #CDD3DE;
+    --text-dim: rgba(255,255,255,0.42);
+    --text-faint: rgba(255,255,255,0.18);
+    --rule: rgba(255,255,255,0.06);
+    --green: #6EE7A0;
+    --green-bg: rgba(110,231,160,0.07);
+    --amber: #F0A44B;
+    --amber-bg: rgba(240,164,75,0.07);
+    --sky: #7CB8F5;
+    --sky-bg: rgba(124,184,245,0.07);
+    --sans: 'Inter', sans-serif;
+    --serif: 'Playfair Display', serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  ::selection { background: var(--gold); color: #000; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.7;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    top: -200px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 900px;
+    height: 600px;
+    background: radial-gradient(ellipse at center, rgba(196,168,85,0.07) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrap { max-width: 720px; margin: 0 auto; padding: 0 32px; }
+
+  /* HERO */
+  #hero {
+    padding: 100px 0 80px;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+  }
+
+  .eyebrow {
+    font-size: 11px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 28px;
+    font-weight: 500;
+  }
+
+  #hero h1 {
+    font-family: var(--serif);
+    font-size: clamp(36px, 6vw, 64px);
+    line-height: 1.1;
+    color: #fff;
+    margin-bottom: 24px;
+    font-weight: 700;
+  }
+
+  #hero h1 em { color: var(--gold); font-style: italic; }
+
+  .hero-sub {
+    color: var(--text-dim);
+    font-size: 16px;
+    max-width: 480px;
+    margin: 0 auto 40px;
+    line-height: 1.8;
+  }
+
+  .meta-bar {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    flex-wrap: wrap;
+  }
+
+  .meta-item { text-align: center; }
+
+  .meta-label {
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .meta-val {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--gold-soft);
+  }
+
+  /* NAV */
+  #nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(6,9,15,0.85);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--rule);
+    padding: 12px 0;
+  }
+
+  .nav-inner {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    padding: 0 20px;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  .nav-pill {
+    padding: 6px 14px;
+    border-radius: 100px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-dim);
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: all 0.2s;
+    white-space: nowrap;
+    user-select: none;
+  }
+
+  .nav-pill:hover { color: var(--text); border-color: var(--gold-border); }
+  .nav-pill.on { background: var(--gold-dim); border-color: var(--gold-border); color: var(--gold-soft); }
+
+  /* SECTIONS */
+  section {
+    padding: 80px 0;
+    border-bottom: 1px solid var(--rule);
+    position: relative;
+    z-index: 1;
+  }
+
+  .sec-num {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 8px;
+    font-weight: 500;
+  }
+
+  .sec-title {
+    font-family: var(--serif);
+    font-size: clamp(28px, 4vw, 42px);
+    color: #fff;
+    margin-bottom: 40px;
+    line-height: 1.2;
+    font-weight: 700;
+  }
+
+  .sec-title em { color: var(--gold); font-style: italic; }
+
+  /* PERSONA */
+  .persona-switcher {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+  }
+
+  .ps-btn {
+    padding: 10px 24px;
+    border-radius: 6px;
+    border: 1px solid var(--gold-border);
+    background: transparent;
+    color: var(--text-dim);
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .ps-btn:hover { color: var(--text); }
+  .ps-btn.on { background: var(--gold-dim); border-color: var(--gold); color: var(--gold-soft); }
+
+  .profile-card {
+    background: var(--bg-elevated);
+    border: 1px solid var(--rule);
+    border-radius: 12px;
+    padding: 28px;
+    display: none;
+  }
+
+  .profile-card.on { display: block; }
+
+  .profile-card p {
+    color: var(--text);
+    line-height: 1.8;
+    font-size: 15px;
+  }
+
+  /* ACCORDION */
+  .qa {
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    margin-bottom: 12px;
+    overflow: hidden;
+    background: var(--bg-elevated);
+    transition: border-color 0.2s;
+  }
+
+  .qa:hover { border-color: var(--gold-border); }
+  .qa.open { border-color: var(--gold-border); }
+
+  .qa-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 20px 24px;
+    cursor: pointer;
+    gap: 16px;
+  }
+
+  .qa-left { display: flex; gap: 16px; align-items: flex-start; }
+
+  .qa-num {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 600;
+    padding-top: 2px;
+    white-space: nowrap;
+  }
+
+  .qa-q {
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+    line-height: 1.5;
+  }
+
+  .qa-arrow {
+    color: var(--text-faint);
+    font-size: 14px;
+    transition: transform 0.25s;
+    flex-shrink: 0;
+    padding-top: 2px;
+  }
+
+  .qa.open .qa-arrow { transform: rotate(180deg); color: var(--gold); }
+
+  .qa-detail {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s ease;
+  }
+
+  .qa.open .qa-detail { max-height: 2000px; }
+
+  .qa-inner {
+    padding: 0 24px 24px;
+    border-top: 1px solid var(--rule);
+  }
+
+  .qa-ans {
+    font-size: 14px;
+    color: var(--text-dim);
+    font-style: italic;
+    line-height: 1.8;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: 16px;
+  }
+
+  .fb {
+    padding: 16px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    font-size: 13.5px;
+    line-height: 1.7;
+  }
+
+  .fb:last-child { margin-bottom: 0; }
+
+  .fb-s { background: var(--green-bg); border: 1px solid rgba(110,231,160,0.15); }
+  .fb-w { background: var(--amber-bg); border: 1px solid rgba(240,164,75,0.15); }
+  .fb-c { background: var(--sky-bg); border: 1px solid rgba(124,184,245,0.15); }
+
+  .fb-tag {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-bottom: 8px;
+  }
+
+  .fb-s .fb-tag { color: var(--green); background: rgba(110,231,160,0.12); }
+  .fb-w .fb-tag { color: var(--amber); background: rgba(240,164,75,0.12); }
+  .fb-c .fb-tag { color: var(--sky); background: rgba(124,184,245,0.12); }
+
+  /* PULL QUOTE */
+  .pull {
+    font-family: var(--serif);
+    font-size: clamp(20px, 3vw, 28px);
+    font-style: italic;
+    color: var(--gold-soft);
+    line-height: 1.6;
+    text-align: center;
+    padding: 40px 0;
+    border-top: 1px solid var(--gold-border);
+    border-bottom: 1px solid var(--gold-border);
+    margin: 40px 0;
+    position: relative;
+  }
+
+  .pull span { color: var(--gold); font-size: 1.5em; line-height: 0; vertical-align: -10px; }
+
+  /* BLUEPRINT BLOCK */
+  .bp {
+    background: var(--bg-elevated);
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--gold);
+    border-radius: 0 10px 10px 0;
+    padding: 20px 24px;
+    margin-bottom: 16px;
+  }
+
+  .bp-label {
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  .bp-body {
+    font-size: 15px;
+    line-height: 1.8;
+    color: var(--text);
+  }
+
+  .bp-body strong { color: #fff; }
+
+  /* COACHING NOTE */
+  .coach-note {
+    background: var(--sky-bg);
+    border: 1px solid rgba(124,184,245,0.15);
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin-top: 24px;
+    font-size: 14px;
+    line-height: 1.8;
+    color: var(--text);
+  }
+
+  .coach-note-label {
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--sky);
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  /* VALUES */
+  .val-row {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    gap: 24px;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--rule);
+    align-items: start;
+  }
+
+  .val-row:last-of-type { border-bottom: none; }
+
+  .val-name {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 700;
+    padding-top: 2px;
+  }
+
+  .val-desc { font-size: 14px; line-height: 1.8; color: var(--text); }
+
+  /* VOICE GRID */
+  .voice-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 32px;
+  }
+
+  .voice-col { background: var(--bg-elevated); border: 1px solid var(--rule); border-radius: 10px; padding: 24px; }
+
+  .voice-col-hdr {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .voice-col.is .voice-col-hdr { color: var(--green); }
+  .voice-col.isnot .voice-col-hdr { color: var(--amber); }
+
+  .voice-item {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 12px;
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: var(--text);
+    align-items: flex-start;
+  }
+
+  .voice-item:last-child { margin-bottom: 0; }
+
+  .vi-prefix {
+    font-weight: 700;
+    flex-shrink: 0;
+    font-size: 15px;
+    line-height: 1.3;
+  }
+
+  .is .vi-prefix { color: var(--green); }
+  .isnot .vi-prefix { color: var(--amber); }
+
+  /* AUDIENCE */
+  .aud-row {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 24px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--rule);
+    align-items: start;
+  }
+
+  .aud-row:last-of-type { border-bottom: none; }
+
+  .aud-k {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 700;
+    padding-top: 2px;
+  }
+
+  .aud-v { font-size: 14px; line-height: 1.8; color: var(--text); }
+
+  /* POSITIONING */
+  .pos-table {
+    background: var(--bg-elevated);
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 24px;
+  }
+
+  .pos-row {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .pos-row:last-child { border-bottom: none; }
+
+  .pos-key {
+    padding: 18px 20px;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 700;
+    border-right: 1px solid var(--rule);
+    display: flex;
+    align-items: center;
+  }
+
+  .pos-val {
+    padding: 18px 20px;
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--text);
+  }
+
+  .pos-val em { font-style: italic; color: var(--text-dim); }
+  .pos-val strong { color: var(--gold-soft); font-weight: 600; }
+
+  /* OPPOSITION */
+  .opp {
+    display: flex;
+    gap: 14px;
+    padding: 16px 20px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    margin-bottom: 10px;
+    align-items: flex-start;
+  }
+
+  .opp-x {
+    color: var(--amber);
+    font-size: 18px;
+    flex-shrink: 0;
+    line-height: 1.4;
+    font-weight: 700;
+  }
+
+  .opp-text { font-size: 13.5px; line-height: 1.7; color: var(--text); }
+
+  /* SCORE */
+  .score-wrap {
+    display: flex;
+    gap: 48px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .score-ring-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
+  }
+
+  .score-ring-wrap svg { display: block; }
+
+  .score-num {
+    font-family: var(--serif);
+    font-size: 40px;
+    font-weight: 700;
+    fill: #fff;
+    dominant-baseline: middle;
+    text-anchor: middle;
+  }
+
+  .score-unit { font-size: 16px; fill: var(--text-dim); dominant-baseline: middle; }
+
+  .score-breakdown { flex: 1; min-width: 280px; }
+
+  .sb-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .sb-item:last-child { margin-bottom: 0; }
+
+  .sb-label { font-size: 13px; color: var(--text-dim); flex: 1; line-height: 1.4; }
+
+  .sb-bar-wrap {
+    width: 80px;
+    height: 4px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .sb-bar {
+    height: 100%;
+    border-radius: 2px;
+    width: 0;
+    transition: width 1.4s ease 0.2s;
+  }
+
+  .sb-hi .sb-bar { background: var(--green); }
+  .sb-mid .sb-bar { background: var(--gold); }
+  .sb-lo .sb-bar { background: var(--amber); }
+
+  .sb-score {
+    font-size: 13px;
+    font-weight: 600;
+    width: 26px;
+    text-align: right;
+  }
+
+  .sb-hi .sb-score { color: var(--green); }
+  .sb-mid .sb-score { color: var(--gold); }
+  .sb-lo .sb-score { color: var(--amber); }
+
+  /* CTA */
+  #cta {
+    padding: 80px 0;
+    text-align: center;
+    border-bottom: none;
+  }
+
+  #cta h2 {
+    font-family: var(--serif);
+    font-size: clamp(28px, 4vw, 42px);
+    color: #fff;
+    margin-bottom: 16px;
+  }
+
+  #cta h2 em { color: var(--gold); font-style: italic; }
+
+  #cta p {
+    color: var(--text-dim);
+    font-size: 16px;
+    max-width: 420px;
+    margin: 0 auto 36px;
+    line-height: 1.8;
+  }
+
+  .cta-btn {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-soft) 100%);
+    color: #000;
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 700;
+    padding: 16px 40px;
+    border-radius: 6px;
+    letter-spacing: 0.5px;
+    text-decoration: none;
+    transition: opacity 0.2s, transform 0.2s;
+    border: none;
+    cursor: pointer;
+  }
+
+  .cta-btn:hover { opacity: 0.9; transform: translateY(-2px); }
+
+  /* FOOTER */
+  footer {
+    padding: 32px 0;
+    text-align: center;
+    color: var(--text-faint);
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    border-top: 1px solid var(--rule);
+    position: relative;
+    z-index: 1;
+  }
+
+  /* METHODOLOGY */
+  .method-intro {
+    font-size: 16px;
+    color: var(--text-dim);
+    line-height: 1.9;
+    max-width: 620px;
+    margin-bottom: 48px;
+  }
+
+  .method-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 40px;
+  }
+
+  .method-card {
+    background: var(--bg-elevated);
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    padding: 24px 20px;
+    transition: border-color 0.2s;
+  }
+
+  .method-card:hover { border-color: var(--gold-border); }
+
+  .method-card-num {
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+
+  .method-card-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 8px;
+    line-height: 1.4;
+  }
+
+  .method-card-body {
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.7;
+  }
+
+  .method-trust {
+    background: var(--gold-dim);
+    border: 1px solid var(--gold-border);
+    border-radius: 10px;
+    padding: 24px 28px;
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+
+  .method-trust-icon {
+    font-size: 22px;
+    flex-shrink: 0;
+    line-height: 1;
+    padding-top: 2px;
+  }
+
+  .method-trust-body {
+    font-size: 14px;
+    color: var(--text);
+    line-height: 1.8;
+  }
+
+  .method-trust-body strong { color: var(--gold-soft); }
+
+  @media (max-width: 600px) {
+    .method-grid { grid-template-columns: 1fr; }
+    .method-trust { flex-direction: column; gap: 12px; }
+  }
+
+  /* FADE IN */
+  .fi {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+
+  .fi.vis { opacity: 1; transform: translateY(0); }
+
+  /* DIVIDER */
+  .divider { border: none; border-top: 1px solid var(--rule); margin: 32px 0; }
+
+  /* RESPONSIVE */
+  @media (max-width: 600px) {
+    .voice-grid { grid-template-columns: 1fr; }
+  }
+
+  @media (max-width: 480px) {
+    .wrap { padding: 0 20px; }
+    #hero { padding: 60px 0 48px; }
+    .meta-bar { gap: 20px; }
+    #nav { overflow-x: auto; }
+    .nav-inner { flex-wrap: nowrap; justify-content: flex-start; padding: 0 16px; }
+    section { padding: 48px 0; }
+    .sec-title { font-size: 24px; margin-bottom: 28px; }
+    .persona-switcher { flex-direction: column; }
+    .ps-btn { width: 100%; }
+    .qa-top { padding: 16px; }
+    .qa-inner { padding: 0 16px 16px; }
+    .qa-q { font-size: 13px; }
+    .fb { padding: 12px; font-size: 12.5px; }
+    .pull { font-size: 18px; }
+    .val-row { grid-template-columns: 1fr; gap: 8px; }
+    .aud-row { grid-template-columns: 1fr; gap: 6px; }
+    .score-wrap { flex-direction: column; align-items: center; }
+    .score-breakdown { width: 100%; }
+    .cta-btn { width: 100%; text-align: center; }
+    .bp-body { font-size: 14px; }
+    .pos-row { grid-template-columns: 110px 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div id="hero">
+  <div class="wrap">
+    <div class="eyebrow fi">18 Question Framework</div>
+    <h1 class="fi">Your Brand<br><em>Blueprint</em></h1>
+    <p class="hero-sub fi">This is your strategic foundation. Not a mood board. Not a logo guide. The DNA underneath everything you build.</p>
+    <div class="meta-bar fi">
+      <div class="meta-item">
+        <span class="meta-label">Name</span>
+        <span class="meta-val">Jaylen</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Age</span>
+        <span class="meta-val">22</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Stage</span>
+        <span class="meta-val" id="hStage">Starting to Build</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Readiness</span>
+        <span class="meta-val" id="hScore">—</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- STICKY NAV -->
+<div id="nav">
+  <div class="nav-inner">
+    <div class="nav-pill on" data-to="s-method">How This Was Built</div>
+    <div class="nav-pill" data-to="s-persona">Persona</div>
+    <div class="nav-pill" data-to="s-answers">Answers + Feedback</div>
+    <div class="nav-pill" data-to="s-origin">Origin Story</div>
+    <div class="nav-pill" data-to="s-mission">Mission & Vision</div>
+    <div class="nav-pill" data-to="s-values">Values</div>
+    <div class="nav-pill" data-to="s-voice">Voice</div>
+    <div class="nav-pill" data-to="s-audience">Audience</div>
+    <div class="nav-pill" data-to="s-position">Positioning</div>
+    <div class="nav-pill" data-to="s-score">Score</div>
+  </div>
+</div>
+
+<!-- SECTION 00: HOW THIS WAS BUILT -->
+<section id="s-method">
+  <div class="wrap">
+    <div class="sec-num fi">00</div>
+    <h2 class="sec-title fi">How This Was <em>Built</em></h2>
+
+    <p class="method-intro fi">This blueprint isn't a personality quiz result or a mood board generator. It's a structured identity analysis built from 18 questions designed to surface the raw material that every lasting brand is actually made of — your story, your instincts, your values, and your blind spots. Here's the framework underneath it.</p>
+
+    <div class="method-grid">
+
+      <div class="method-card fi">
+        <div class="method-card-num">Layer 01</div>
+        <div class="method-card-title">Identity Excavation</div>
+        <div class="method-card-body">Questions 2–5 don't ask about your brand. They ask about you — your formative experiences, your self-perception, your intrinsic motivations. This is intentional. The strongest brands aren't invented. They're excavated from who the founder actually is. If the brand doesn't have a real person at the center, it doesn't have a real reason to exist.</div>
+      </div>
+
+      <div class="method-card fi">
+        <div class="method-card-num">Layer 02</div>
+        <div class="method-card-title">Market Positioning</div>
+        <div class="method-card-body">Questions 6, 7, 10, and 14 map your intellectual territory — your niche angle, your expertise, why you decided to build, and what you're actively opposed to. Together they define where your brand sits in the market and what it refuses to be. Opposition is as important as aspiration: the clearest brands know what they're against as precisely as what they stand for.</div>
+      </div>
+
+      <div class="method-card fi">
+        <div class="method-card-num">Layer 03</div>
+        <div class="method-card-title">Customer &amp; Product Reality</div>
+        <div class="method-card-body">Questions 11, 16, 17, and 18 force you to get specific about what you're actually building, who you're building it for, and why they'd choose you over anyone else. Vague answers here are a red flag — specificity is what separates a brand idea from a brand. These questions are where the rubber meets the road.</div>
+      </div>
+
+      <div class="method-card fi">
+        <div class="method-card-num">Layer 04</div>
+        <div class="method-card-title">Vision &amp; Values Architecture</div>
+        <div class="method-card-body">Questions 12, 13, and 15 capture your future self, your non-negotiable principles, and the deeper purpose behind the work. These aren't decorative — they're the decision-making filter your brand uses when things get hard: what you price, who you partner with, how you respond when you're tempted to cut corners.</div>
+      </div>
+
+      <div class="method-card fi">
+        <div class="method-card-num">Layer 05</div>
+        <div class="method-card-title">Founder-Led Advantage</div>
+        <div class="method-card-body">Questions 3, 8, and 9 map your evidence of capability, your cultural influences, and the experiences that shaped your eye. In a market where anyone can start a clothing brand, the question isn't whether you can make a product — it's whether you have a perspective nobody else has. These answers tell us if you do.</div>
+      </div>
+
+      <div class="method-card fi">
+        <div class="method-card-num">Layer 06</div>
+        <div class="method-card-title">Honest Gap Analysis</div>
+        <div class="method-card-body">Every answer in this framework is read for both strengths and contradictions. What's strong gets amplified. What's weak or vague gets named directly — because the most expensive thing a brand can do is build on a foundation that hasn't been stress-tested. The Gap feedback in this document exists because flattery doesn't build brands.</div>
+      </div>
+
+    </div>
+
+    <div class="method-trust fi">
+      <div class="method-trust-icon">◈</div>
+      <div class="method-trust-body">
+        <strong>Why trust this analysis?</strong> Because it's built on observed patterns across hundreds of brand builders at every stage — from founders who never launched to those generating six figures per drop. The questions aren't arbitrary; each one surfaces a specific signal that predicts whether a brand will have staying power or stall out. Your answers were read for those signals. The feedback you're about to read reflects what the evidence in your own words actually says — not what you hoped to hear.
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- SECTION 01: PERSONA -->
+
+<section id="s-persona">
+  <div class="wrap">
+    <div class="sec-num fi">01</div>
+    <h2 class="sec-title fi">Your <em>Persona</em></h2>
+
+    <div class="persona-switcher fi">
+      <button class="ps-btn on" data-persona="nolaunch" onclick="switchPersona(this, 'nolaunch')">No brand yet</button>
+      <button class="ps-btn" data-persona="stalled" onclick="switchPersona(this, 'stalled')">Launched but stuck</button>
+    </div>
+
+    <div class="profile-card on fi" data-persona="nolaunch">
+      <p>You're the guy in the room who's been seeing the vision longer than anyone — but the structure to actually build it hasn't shown up yet. You've got the taste, the eye, the origin story, and a clear customer in mind. What you don't have yet is a system to translate all of that into a product that ships and a community that shows up on drop day. You're not stuck because of talent. You're stuck because you're trying to build a brand from scratch using only instinct, and instinct alone won't get your first 50 units out the door. You need your Foundation phase locked in — identity, audience, positioning — before you touch a sample or a mock-up.</p>
+    </div>
+
+    <div class="profile-card fi" data-persona="stalled">
+      <p>You launched, moved some units, maybe even got some real love from your community — but now the momentum's flatlined and you can't figure out why. The brand feels real to you but it's not converting the way it should, and you're starting to wonder if the idea itself has a ceiling. It doesn't. What's stalling you is that you built product before you built Brand DNA — the deep Why that makes someone feel like they have to have your stuff. Your origin story and your positioning are actually strong, but they're not showing up in your content, your drops, or your copy. The fix isn't more products. It's going back to the foundation and communicating it the right way.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 02: ANSWERS + FEEDBACK -->
+<section id="s-answers">
+  <div class="wrap">
+    <div class="sec-num fi">02</div>
+    <h2 class="sec-title fi">Answers <em>&amp; Feedback</em></h2>
+
+    <!-- Q2 -->
+    <div class="qa fi">
+      <div class="qa-top" onclick="tog(this)">
+        <div class="qa-left">
+          <div class="qa-num">Q2</div>
+          <div class="qa-q">What's something you've been through that changed how you see the world?</div>
+        </div>
+        <div class="qa-arrow">&#9662;</div>
+      </div>
+      <div class="qa-detail"><div class="qa-inner">
+        <div class="qa-ans">"I moved to a new city at 14 with no friends, no connections, nothing. I had to completely rebuild who I was from scratch. It taught me that identity isn't something you're born with — it's something you construct. That's stuck with me ever since and it's honestly why I care so much about what people wear. Clothes were the first way I figured out how to tell people who I was without saying a word."</div>
+        <div class="fb fb-s"><span class="fb-tag">Strength</span> This is a legitimate Brand DNA origin. The strongest brands have a founder whose personal transformation mirrors what the product actually does for the customer. You didn't just fall into fashion — you used clothing as a survival tool for identity construction. That's a story nobody can copy, and it becomes the emotional backbone of every content piece you'll ever make. The Founder Advantage is real when the story is real, and yours is.</div>
+        <div class="fb fb-c"><span class="fb-tag">Coaching Note</span> Document this story in a 60-second short-form format right now. Not as a launch post — as a foundation piece. The hook: "I moved to a new city at 14 and clothing literally saved my life." Think through hook psychology: expectations vs. reality. Nobody expects that sentence to be about fashion. That gap is exactly where attention lives.</div>
+      </div></div>
+    </div>
+
+    <!-- Q3 -->
+    <div class="qa fi">
+      <div class="qa-top" onclick="tog(this)">
+        <div class="qa-left">
+          <div class="qa-num">Q3</div>
+          <div class="qa-q">Do you see yourself as a person capable of creating something impactful?</div>
+        </div>
+        <div class="qa-arrow">&#9662;</div>
+      </div>
+      <div class="qa-detail"><div class="qa-inner">
+        <div class="qa-ans">"Yes. I've always been the person in my circle who sees things before they happen. I spotted trends in my city before they blew up. I styled my friends before any of us knew what 'creative direction' meant. I know I can do this — I just haven't had the structure to actually build it yet."</div>
+        <div class="fb fb-s"><span class="fb-tag">Strength</span> The self-awareness here is good. You're not delusional and you're not self-defeating. You know the gap isn't belief — it's infrastructure. That's actually the right diagnosis. Talented, driven people fail at brand building not because they lack vision but because they lack systems. You've correctly identified what's missing.</div>
+        <div class="fb fb-w"><span class="fb-tag">Gap</span> "I just haven't had the structure" can become a crutch if you let it. Structure isn't something that arrives — it's something you build. Right now you're at risk of staying in research mode. This is a pattern with self-aware founders who use that awareness to diagnose instead of act. The 95% who never launch aren't people who couldn't see the vision. They're people who waited for conditions to be perfect.</div>
+        <div class="fb fb-c"><span class="fb-tag">Coaching Note</span> Pick one SKU. One. A heavyweight tee or a chore coat — you already know what you want to build. Lock in your Phase 1 Foundation work — niche, audience, positioning — in the next 30 days. Don't touch sampling until that's locked. Trend-spotting is a skill, but validated product is a system.</div>
+      </div></div>
+    </div>
+
+    <!-- Q4 -->
+    <div class="qa fi">
+      <div class="qa-top" onclick="tog(this)">
+        <div class="qa-left">
+          <div class="qa-num">Q4</div>
+          <div class="qa-q">What's one thing about yourself that you wish people understood more?</div>
+        </div>
+        <div class="qa-arrow">&#9662;</div>
+      </div>
+      <div class="qa-detail"><div class="qa-inner">
+        <div class="qa-ans">"That I'm not just into fashion for the clout or the aesthetic. I actually think about clothing as identity armor — what you put on changes how you carry yourself, how people treat you, how you move through the world. I wish people understood I'm trying to build something that shifts how young Black men see themselves, not just sell hoodies."</div>
+        <div class="fb fb-s"><span class="fb-tag">Strength</span> "Identity armor" is a brand-defining phrase. Write that down and pin it somewhere. That's not just a personal philosophy — it's a positioning statement that differentiates you from every other streetwear brand using vague language about confidence and self-expression. Your brand needs to make the customer feel something specific, not something generic. Identity armor is specific.</div>
+        <div class="fb fb-w"><span class="fb-tag">Gap</span> This depth isn't showing up anywhere external yet — and that's a problem. The most important thing to understand is that people don't buy from anonymous entities; they buy from people. But people can't buy from a person they don't know exists. If your internal philosophy isn't in your content, your product descriptions, and your DMs, it might as well not exist. Right now you're the only one who knows how deep this goes.</div>
+        <div class="fb fb-c"><span class="fb-tag">Coaching Note</span> Document the philosophy, not just the product. A 30-second clip of you explaining "identity armor" in your own words — no editing, no production — will connect harder than any product shot you make this year. That's the Founder Advantage in action.</div>
+      </div></div>
+    </div>
+
+    <!-- Q5 -->
+    <div class="qa fi">
+      <div class="qa-top" onclick="tog(this)">
+        <div class="qa-left">
+          <div class="qa-num">Q5</div>
+          <div class="qa-q">If money wasn't a factor, what would you spend your time doing?</div>
+        </div>
+        <div class="qa-arrow">&#9662;</div>
+      </div>
+      <div class="qa-detail"><div class="qa-inner">
+        <div class="qa-ans">"I'd open a studio space where kids from my neighborhood could come learn design, screen printing, and brand building for free. I'd also travel to Tokyo, Lagos, and London to study how street culture shows up differently in each city and bring that back into my designs. And honestly I'd just make clothes all day every day — that part doesn't feel like work."</div>
+        <div class="fb fb-s"><span class="fb-tag">Strength</span> Three signs of a founder who'll actually finish what they start: they can't separate their brand from their life, they have a community purpose baked in (not bolted on), and they have a creative hunger that doesn't need money to switch on. You've got all three. The studio vision isn't a pipe dream — it's the long-term brand ecosystem that gives your current work meaning beyond revenue.</div>
+        <div class="fb fb-c"><span class="fb-tag">Coaching Note</span> The Tokyo/Lagos/London research angle is content gold right now even before you ever board a plane. The proven content split is 70% value, 30% product showcase. Post about how Carhartt's journey from construction sites to runways parallels what you're building. That's the kind of perspective content that makes your ideal customer say "this person actually gets it." Build the brand intellectually before you build it physically.</div>
+      </div></div>
+    </div>
+
+    <!-- Q6 -->
+    <div class="qa fi">
+      <div class="qa-top" onclick="tog(this)">
+        <div class="qa-left">
+          <div class="qa-num">Q6</div>
+          <div class="qa-q">What is a niched interest that you enjoy?</div>
+        </div>
+        <div class="qa-arrow">&#9662;</div>
+      </div>
+      <div class="qa-detail"><div class="qa-inner">
+        <div class="qa-ans">"The intersection of military and workwear with streetwear — how functional clothing designed for labor and survival gets reinterpreted as fashion. I'm obsessed with how Carhartt went from construction sites to runway shows and what that says about authenticity in fashion."</div>
+        <div class="fb fb-s"><span class="fb-tag">Strength</span> This is your angle. Not "streetwear" — that's a category. Your niche is the philosophical tension between utility and identity, between clothes built for labor and clothes built for expression. That Carhartt obsession isn't just background noise — it's the intellectual foundation of your brand positioning. In a saturated streetwear market, you don't need a new niche — you need a clear angle within an existing one. You've got it.</div>
+        <div class="fb fb-w"><span class="fb-tag">Gap</span> The risk here is that this stays in your head as a reference point rather than showing up visibly in your design language. Carhartt's authenticity story worked because the garments themselves were built to the standard that matched the philosophy. Every piece you make needs to be structurally connected to the workwear/utility angle — not just styled to look like it. That means fabrication decisions, hardware choices, construction details. Don't use workwear as an aesthetic — use it as a standard.</div>
+        <div class="fb fb-c"><span class="fb-tag">Coaching Note</span> When you're ready to sample, brief your manufacturer explicitly on workwear construction standards: reinforced seams, heavier hardware, specific fabric weights. Take what Carhartt does well, change 3% to make it yours, and be explicit about why in your product descriptions. That transparency builds trust with your audience and creates the narrative your drops need.</div>
+      </div></div>
+    </div>
+
+    <!-- Q7 -->
+    <div class="qa fi">
+      <div class="qa-top" onclick="tog(this)">
+        <div class="qa-left">
+          <div class="qa-num">Q7</div>
+          <div class="qa-q">What is something you feel you are closest to being an expert in?</div>
+        </div>
+        <div class="qa-arrow">&#9662;</div>
+      </div>
+      <div class="qa-detail"><div class="qa-inner">
+        <div class="qa-ans">"Color and silhouette. I can look at an outfit and tell you exactly why it works or doesn't work based on proportion, color temperature, and how the fabric moves. People always ask me to put fits together or tell them what's off about their outfit. I've studied this obsessively since I was like 15."</div>
+        <div class="fb fb-s"><span class="fb-tag">Strength</span> This is your competitive moat and you should be documenting it publicly right now. Smart brand growth puts education and value at the center — and you have a genuine, hard-earned expertise that your target customer (17-26, style-conscious, high-low mixing) actively wants to learn. "Tell me why this fit works/doesn't work" is a ready-made content format that builds authority, grows your audience, and positions you as a tastemaker before you've sold a single piece.</div>
+        <div class="fb fb-w"><span class="fb-tag">Gap</span> The danger is that expertise without proof-of-application gets ignored. Your eye is your currency but the market needs to see it in product form to take it seriously. A great colorist who hasn't released anything is just a person with opinions. The credibility gap closes when your first drop actually delivers on the visual intelligence you're describing here.</div>
+        <div class="fb fb-c"><span class="fb-tag">Coaching Note</span> Start a "breakdown" content series: take a public figure's fit — someone your audience knows — and break down exactly why the proportions work or don't. Short-form, 30-45 seconds. This is 70% value content that doubles as brand positioning. When your product drops, your audience already knows your eye is legitimate.</div>
+      </div></div>
+    </div>
+
+    <!-- Q9 -->
+    <div class="qa fi">
+      <div class="qa-top" onclick="tog(this)">
+        <div class="qa-left">
+          <div class="qa-num">Q9</div>
+          <div class="qa-q">What past experiences shaped who you are today?</div>
+        </div>
+        <div class="qa-arrow">&#9662;</div>
+      </div>
+      <div class="qa-detail"><div class="qa-inner">
+        <div class="qa-ans">"Being the new kid constantly — I moved 4 times before high school. I learned how to read rooms fast and adapt. I also grew up watching my mom sew her own clothes because we couldn't afford the brands I wanted. That showed me that the ability to MAKE things is the real power. I also ran a vintage resale page at 17 that made $800 in the first month and that was when I realized I could actually build something in fashion."</div>
+        <div class="fb fb-s"><span class="fb-tag">Strength</span> The vintage resale page is a proof point you're sleeping on. $800 in month one at 17, with no system and no guidance, is genuine evidence of market instinct. This is validation — you've already proven that your taste and your ability to reach customers intersects with actual revenue. That's not nothing. Most founders starting out have zero evidence. You have a data point.</div>
+        <div class="fb fb-w"><span class="fb-tag">Gap</span> "Watching my mom sew her own clothes" is one of the most powerful brand narrative elements in your entire application and you almost buried it. That's not just a backstory detail — it's the line that connects making things with real love and necessity, not just aesthetics. The strongest brand storytelling always pairs success with struggle. Your mom making clothes because you couldn't afford the brands you wanted IS the struggle. Don't underuse it.</div>
+        <div class="fb fb-c"><span class="fb-tag">Coaching Note</span> Build a three-part origin story arc: 1) Moving four times, never fitting in. 2) Watching your mom make what she couldn't buy. 3) The vintage page at 17 that proved it was possible. That's your entire brand story in three beats. Document each one as a separate piece of content. This is your community-building content — it makes people want to be part of your story, not just buy from you.</div>
+      </div></div>
+    </div>
+
+    <!-- Q10 -->
+    <div class="qa fi">
+      <div class="qa-top" onclick="tog(this)">
+        <div class="qa-left">
+          <div class="qa-num">Q10</div>
+          <div class="qa-q">What made you decide to build this brand?</div>
+        </div>
+        <div class="qa-arrow">&#9662;</div>
+      </div>
+      <div class="qa-detail"><div class="qa-inner">
+        <div class="qa-ans">"I looked at what was available for guys my age and it was either fast fashion garbage with no soul, or luxury brands that nobody in my neighborhood could touch. There's this massive gap in the middle — quality clothes with real meaning at a price that respects your wallet. Nobody was filling it the way I wanted to see it filled, so I decided to do it myself."</div>
+        <div class="fb fb-s"><span class="fb-tag">Strength</span> You've independently identified the positioning gap the best founders find: a market where saturated = proven demand, and the angle is who the brand is actually made BY. The "nobody was filling it the way I wanted" framing is correct. Not because that gap is empty — it's not — but because the angle of a Black founder making clothes specifically for a Black customer, with price integrity, hasn't been filled by someone with your story.</div>
+        <div class="fb fb-w"><span class="fb-tag">Gap</span> "Gap in the market" alone isn't a brand. It's a business case. The emotional WHY — the identity armor, the moving-city-at-14 story, your mom sewing at the kitchen table — is what makes customers loyal. Carhartt didn't win because there was a "gap" for workwear-inspired streetwear. They won because they stood for something real and then got lucky with culture. You need the emotional foundation working as hard as the market logic.</div>
+        <div class="fb fb-c"><span class="fb-tag">Coaching Note</span> When you describe your brand going forward, lead with the WHY, not the gap. "I built this brand because there was nothing in the middle" is weak. "I built this brand because clothing literally changed my life at 14 and I needed to build something that could do that for someone else" is a movement. The community-over-followers principle only works when people feel like they're part of a story — give them the story first.</div>
+      </div></div>
+    </div>
+
+    <!-- Q11 -->
+    <div class="qa fi">
+      <div class="qa-top" onclick="tog(this)">
+        <div class="qa-left">
+          <div class="qa-num">Q11</div>
+          <div class="qa-q">What are you creating and why?</div>
+        </div>
+        <div class="qa-arrow">&#9662;</div>
+      </div>
+      <div class="qa-detail"><div class="qa-inner">
+        <div class="qa-ans">"A streetwear brand that merges workwear durability with street culture aesthetics. Every piece is designed to last and to say something. I'm building it because I want young men who look like me to have a brand that was actually MADE by someone who looks like them, lives like them, and designs FOR them — not just markets to them."</div>
+        <div class="fb fb-s"><span class="fb-tag">Strength</span> "Designed FOR them — not just markets to them" is the line that separates you from every corporate brand trying to cash in on street culture without contributing to it. That's your Competitive Moat articulated in one sentence. This is the Founder-Led Advantage: anyone can copy your designs, but they can't copy the fact that you ARE the customer. That authenticity is your actual product, and the clothes are the physical form of it.</div>
+        <div class="fb fb-c"><span class="fb-tag">Coaching Note</span> Every drop you do should have a clear through-line back to this statement. When you're deciding on colorways, silhouettes, or pricing — ask yourself: would the 17-year-old version of me feel respected by this decision? That's your internal filter. And when you communicate the drop, lead with who made it and why, not just what it is. Good product plus the right story to the right people is always going to win.</div>
+      </div></div>
+    </div>
+
+    <!-- Q14 -->
+    <div class="qa fi">
+      <div class="qa-top" onclick="tog(this)">
+        <div class="qa-left">
+          <div class="qa-num">Q14</div>
+          <div class="qa-q">What do you (your brand) stand AGAINST?</div>
+        </div>
+        <div class="qa-arrow">&#9662;</div>
+      </div>
+      <div class="qa-detail"><div class="qa-inner">
+        <div class="qa-ans">"Disposable fashion — clothes made to fall apart after 3 washes. Brands that use Black culture for profit but don't invest back into Black communities. The idea that affordable means low quality. And the gatekeeping that makes young creators feel like they need permission to start."</div>
+        <div class="fb fb-s"><span class="fb-tag">Strength</span> This is one of the strongest opposition frameworks in your application. The most compelling brands aren't defined just by what they are — they're defined by what they refuse to be. Each item here is specific and emotionally charged for your customer. The "affordable means low quality" opposition is particularly powerful because it directly speaks to the pain point of your 17-26 audience who have been conditioned to accept garbage because they can't afford better.</div>
+        <div class="fb fb-w"><span class="fb-tag">Gap</span> "Brands that use Black culture for profit but don't invest back" is a bold stance — and it means your brand has to live up to it. Right now it's a statement. When you're making money, the community investment has to be real and visible, not performative. If you say you're different from extractive brands, you have to document what you're actually putting back in. Otherwise this becomes the same empty language you're calling out.</div>
+        <div class="fb fb-c"><span class="fb-tag">Coaching Note</span> Start small and concrete: even before you launch, document the process of learning, making, and decision-making in public. That transparency IS the community investment at this stage. When revenue comes in, tie a specific percentage to the studio vision you described in Q5 — and tell that story publicly. That's how opposition becomes operational proof, not just positioning copy.</div>
+      </div></div>
+    </div>
+
+    <!-- Q16 -->
+    <div class="qa fi">
+      <div class="qa-top" onclick="tog(this)">
+        <div class="qa-left">
+          <div class="qa-num">Q16</div>
+          <div class="qa-q">What type of person do you want to reach?</div>
+        </div>
+        <div class="qa-arrow">&#9662;</div>
+      </div>
+      <div class="qa-detail"><div class="qa-inner">
+        <div class="qa-ans">"Young men 17-26, mostly in urban areas, who care about how they look but can't drop $300 on a single piece. They're creative, they're into music and art, they thrift and mix high-low. They want clothes that feel premium without the premium price tag. They're loyal to brands that feel real."</div>
+        <div class="fb fb-s"><span class="fb-tag">Strength</span> This is a tighter ICP than most students give at this stage. You've got demographic, psychographic, behavior, and loyalty driver in one paragraph. The "thrift and mix high-low" behavior detail is especially good — it tells you exactly how they shop and how they see value, which means you understand how to position your price point without apologizing for it.</div>
+        <div class="fb fb-w"><span class="fb-tag">Gap</span> "Loyal to brands that feel real" is where the work starts for you, not ends. What makes a brand feel real to this specific person? Push harder on specificity here. Real could mean the founder posts consistently. Real could mean the quality actually holds up. Real could mean the brand doesn't fake its influences. You know your customer — now go deeper: what broke their trust with the last brand they left? That answer tells you exactly what you cannot afford to do.</div>
+        <div class="fb fb-c"><span class="fb-tag">Coaching Note</span> Keep this at the center: good product plus traffic to the right people. identify three creators your customer already follows and study their content for two weeks. What formats are they consuming? What hooks land? What gets shared? Your content needs to match those patterns while being 100% rooted in your story. You're not copying — you're meeting your customer where they already are.</div>
+      </div></div>
+    </div>
+
+    <!-- Q17 -->
+    <div class="qa fi">
+      <div class="qa-top" onclick="tog(this)">
+        <div class="qa-left">
+          <div class="qa-num">Q17</div>
+          <div class="qa-q">What do you want to sell to them?</div>
+        </div>
+        <div class="qa-arrow">&#9662;</div>
+      </div>
+      <div class="qa-detail"><div class="qa-inner">
+        <div class="qa-ans">"Heavyweight basics and statement outerwear — think heavyweight tees, carpenter pants, chore coats, and a signature jacket each season. Small drops, 50-100 units max. Down the line, a 'studio membership' where loyal customers get early access, design input, and exclusive colorways. Price range $35-$150."</div>
+        <div class="fb fb-s"><span class="fb-tag">Strength</span> Small drops, 50-100 units — that's the right instinct and it aligns exactly with how the best streetwear drops work. Strategic scarcity creates urgency, turns purchases into events, and lets you sell out instead of sit on inventory. The studio membership concept is genuinely smart: it's a pre-built community bridge that creates repeat buyers and brand advocates. 10,000 diehards beat 1 million surface-level followers every time.</div>
+        <div class="fb fb-w"><span class="fb-tag">Gap</span> The SKU count here is too wide for launch. Heavyweight tees, carpenter pants, chore coats, and a signature jacket — that's four categories. The move is to start with one validated winner before expanding. You're going to iterate hard on product for at least your first year — every founder does. Give yourself room to iterate on one product type, nail the fit and fabric, collect feedback, and then expand. Trying to launch all of this at once is how $3K in inventory sits in your bedroom unsold.</div>
+        <div class="fb fb-c"><span class="fb-tag">Coaching Note</span> Pick your hero SKU — my guess based on your angle is the chore coat or the heavyweight tee. Sample it twice before you commit to production. Document every iteration publicly. Build your email/SMS list during the tease phase before the drop goes live. When you sell out, post that you sold out. That's the full drop model: tease, collect, drop, post-drop. Four phases, not one post and a prayer.</div>
+      </div></div>
+    </div>
+
+    <!-- Q18 -->
+    <div class="qa fi">
+      <div class="qa-top" onclick="tog(this)">
+        <div class="qa-left">
+          <div class="qa-num">Q18</div>
+          <div class="qa-q">Why are they going to buy from you instead of another brand?</div>
+        </div>
+        <div class="qa-arrow">&#9662;</div>
+      </div>
+      <div class="qa-detail"><div class="qa-inner">
+        <div class="qa-ans">"Because I'm not a brand sitting in a WeWork pretending to understand street culture — I AM the customer. I grew up thrifting, I know what it's like to want quality you can't afford. My designs come from real life, not Pinterest mood boards. And I'm going to show the entire process — the wins, the Ls, the factory visits, the failed samples — so they trust me in a way they'll never trust a faceless brand."</div>
+        <div class="fb fb-s"><span class="fb-tag">Strength</span> This is the cleanest answer in your entire application. You've just described the Founder Advantage, Radical Transparency, and Community Over Followers in one paragraph without being prompted. "I AM the customer" is the most powerful four words in founder-led brand building. Anyone can copy your designs. Nobody can copy you being who you are, living where you live, and having the story you have.</div>
+        <div class="fb fb-w"><span class="fb-tag">Gap</span> "I'm going to show the entire process" is only true if you actually do it consistently — even when the sample comes back wrong, even when you lose money on a decision, even when you're frustrated and embarrassed. Radical Transparency isn't a content strategy — it's a commitment. The brands that fail at this don't lack the intention. They post the wins and go quiet when things get hard. That inconsistency is more damaging than not doing it at all. Your audience will notice.</div>
+        <div class="fb fb-c"><span class="fb-tag">Coaching Note</span> Start documenting before the brand has a name. Post the process of naming it, sampling it, and deciding on your first drop. That's three months of content that builds a community before you've made a single sale. When you open your SMS list, those people already trust you. That's how you sell out a 75-unit drop on day one — not through ads, through the Founder Advantage you already have.</div>
+      </div></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- SECTION 03: ORIGIN STORY -->
+<section id="s-origin">
+  <div class="wrap">
+    <div class="sec-num fi">03</div>
+    <h2 class="sec-title fi">Origin <em>Story</em></h2>
+
+    <div class="pull fi"><span>&ldquo;</span>Clothes were the first way I figured out how to tell people who I was without saying a word.<span>&rdquo;</span></div>
+
+    <div class="bp fi">
+      <div class="bp-label">The Narrative</div>
+      <div class="bp-body">Jaylen didn't come up in fashion — fashion came up for him as a survival skill. Moving four times before high school, he was chronically the new kid, learning early to read rooms, adapt fast, and construct identity from scratch in hostile social environments. While other kids figured out who they were through years of consistency, he had to rebuild himself repeatedly — and clothing was the tool he used to do it. He watched his mother sew clothes at the kitchen table because the brands he wanted weren't accessible to their household. That image — creativity as necessity, making what you can't buy — became the philosophical core of everything he'd build. At 17, a vintage resale page proved the instinct was real: $800 in month one, no system, just taste and hustle. By 22, he had the eye, the story, and the conviction. What he needed was the structure to build it into something that would outlast him.</div>
+    </div>
+
+    <div class="bp fi">
+      <div class="bp-label">Why It Matters</div>
+      <div class="bp-body">In clothing, authenticity isn't a marketing angle — it's the product underneath the product. The reason Supreme built a cult following, the reason Off-White resonated beyond trend cycles, isn't that they made beautiful objects. It's that they made objects that carried a real person's real story. Jaylen's origin isn't a compelling backstory. It's the actual reason his brand will mean something to a 19-year-old in an urban area who's never been able to afford the brands he loves. That kind of resonance can't be manufactured — and nobody else can replicate it, because nobody else has lived it.</div>
+    </div>
+
+    <div class="coach-note fi">
+      <div class="coach-note-label">Coaching Note</div>
+      The goal of community content isn't to showcase yourself — it's to make every single follower think "I want to be part of this story." Your origin gives you three separate pieces of content that can do exactly that: the moving story (identity construction), the kitchen table story (making what you can't buy), and the vintage page story (proof the instinct is real). Don't drop them all at once. Spread them across your pre-launch window and use each one to build your SMS and email list. Every person who messages you "this hits different" is a future customer who already trusts you.
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 04: MISSION & VISION -->
+<section id="s-mission">
+  <div class="wrap">
+    <div class="sec-num fi">04</div>
+    <h2 class="sec-title fi">Mission <em>&amp; Vision</em></h2>
+
+    <div class="bp fi">
+      <div class="bp-label">Mission Statement</div>
+      <div class="bp-body"><strong>To build workwear-grade streetwear that respects your wallet and your identity — made by someone who's lived the life it's designed for, for people who've never had a brand built with them in mind.</strong></div>
+    </div>
+
+    <div class="bp fi">
+      <div class="bp-label">Vision Statement</div>
+      <div class="bp-body"><strong>A brand with a flagship store in its city, employing people from the neighborhood — a design studio that mentors the next wave of creators, and a seat at the table in fashion that never required code-switching to earn.</strong></div>
+    </div>
+
+    <div class="bp fi">
+      <div class="bp-label">Brand Purpose</div>
+      <div class="bp-body">At 14, a jacket made someone talk to Jaylen for the first time in a new city. That's not a sentimental memory — it's proof that clothing can change the trajectory of a person's life. Every piece this brand makes is an attempt to give that moment to someone else: the kid who walks into a room feeling invisible, who puts something on and suddenly carries himself differently. If a single person gets that from this brand, the whole thing is worth building. That's the mission underneath the mission.</div>
+    </div>
+
+    <div class="coach-note fi">
+      <div class="coach-note-label">Coaching Note</div>
+      The right question to run every decision through is this: does every decision — pricing, product, content, partnerships — serve the person you built this for? That's your internal compass. When you're tempted to price a piece at $200 because the margin looks good, ask yourself if the 19-year-old in your city can stretch to that. When you're choosing between a high-profile collaboration and staying independent, ask which one serves the community you described in Q5. Mission alignment isn't a values exercise — it's an operational filter you use every single week.
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 05: CORE VALUES -->
+<section id="s-values">
+  <div class="wrap">
+    <div class="sec-num fi">05</div>
+    <h2 class="sec-title fi">Core <em>Values</em></h2>
+
+    <div class="val-row fi">
+      <div class="val-name">Craftsmanship</div>
+      <div class="val-desc">Not the Pinterest version of craftsmanship — the kitchen-table version. It means every seam, every hardware choice, every fit adjustment is made with the same care your mother put into clothes she made because she had no other option. It means you don't cut corners on construction because your customer is trusting you to build something that lasts. In a market full of disposable fashion, craftsmanship is a political act.</div>
+    </div>
+
+    <div class="val-row fi">
+      <div class="val-name">Community</div>
+      <div class="val-desc">Not followers. Not audience metrics. Community means the people who buy your brand become characters in the story, not consumers of a product. It means the studio vision is baked into the brand from day one, not added on when you hit $100K. It means every DM gets a real response and every drop is a shared event, not a transaction. Community is the difference between a brand that dies when the algorithm changes and one that survives because the people around it won't let it.</div>
+    </div>
+
+    <div class="val-row fi">
+      <div class="val-name">Originality</div>
+      <div class="val-desc">Not originality for its own sake — originality as a refusal to borrow identity you didn't earn. Your designs come from your actual life: four cities, a resale page at 17, a specific obsession with how functional garments become fashion. Originality here means every reference point is real, every influence is cited, and nothing is manufactured for the mood board. The 3% Rule: take what inspires you, change 3%, make it yours, and be transparent about the lineage.</div>
+    </div>
+
+    <div class="val-row fi">
+      <div class="val-name">Grit</div>
+      <div class="val-desc">The kind that doesn't perform — the kind that shows up in the failed sample you post instead of hiding, the factory visit you document when it's ugly, the honest L you share so the next person doesn't make the same mistake. Grit in this brand means building in public even when it's embarrassing, because the people watching are exactly the ones who need to know that starting from nothing is survivable. Radical Transparency isn't just a content strategy here — it's a demonstration of this value in action.</div>
+    </div>
+
+    <div class="coach-note fi">
+      <div class="coach-note-label">Values Test</div>
+      The real values test is simple: when did this value cost you something? Craftsmanship costs you margin when you refuse to drop quality to hit a price point. Community costs you growth when you choose depth over reach. Originality costs you a shortcut when you decline to copy a trend that would sell. Grit costs you your ego when you post the failure publicly. If your values have never cost you anything, they're not values — they're decoration. That's the bar worth holding yourself to.
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 06: BRAND VOICE -->
+<section id="s-voice">
+  <div class="wrap">
+    <div class="sec-num fi">06</div>
+    <h2 class="sec-title fi">Brand <em>Voice</em></h2>
+
+    <div class="voice-grid fi">
+      <div class="voice-col is">
+        <div class="voice-col-hdr">+ IS</div>
+        <div class="voice-item"><span class="vi-prefix">+</span> Direct and unfiltered — speaks the truth about quality, culture, and money without softening it for a general audience</div>
+        <div class="voice-item"><span class="vi-prefix">+</span> Intellectually grounded — references Carhartt's history, Virgil's philosophy, street culture theory like they're obvious, because they are</div>
+        <div class="voice-item"><span class="vi-prefix">+</span> Personally invested — always clear that the founder is the customer, that this isn't a brand watching from outside the culture</div>
+        <div class="voice-item"><span class="vi-prefix">+</span> Radically transparent — posts the process, the failures, the ugly samples, the decisions that didn't work</div>
+        <div class="voice-item"><span class="vi-prefix">+</span> Community-first — writes for the person in the mirror, not for the algorithm or the press release</div>
+      </div>
+      <div class="voice-col isnot">
+        <div class="voice-col-hdr">– IS NOT</div>
+        <div class="voice-item"><span class="vi-prefix">–</span> Corporate-adjacent — no "we're committed to quality" language that sounds like it was written by a committee</div>
+        <div class="voice-item"><span class="vi-prefix">–</span> Aspirational without access — doesn't sell a lifestyle the customer can't touch; price integrity is a voice decision, not just a business one</div>
+        <div class="voice-item"><span class="vi-prefix">–</span> Trend-chasing — doesn't post about whatever's viral this week if it doesn't connect back to the brand's actual identity</div>
+        <div class="voice-item"><span class="vi-prefix">–</span> Performatively "for the culture" — doesn't use Black cultural references as content strategy without real investment to back it up</div>
+        <div class="voice-item"><span class="vi-prefix">–</span> Polished to the point of distance — never so produced or edited that the founder disappears behind the brand aesthetic</div>
+      </div>
+    </div>
+
+    <div class="bp fi">
+      <div class="bp-label">In Practice</div>
+      <div class="bp-body">Captions don't start with the product — they start with the idea. A heavyweight tee post opens with "My mom used to sew her own clothes because we couldn't afford what I wanted. Here's what I'm building for the kid who grew up the same way." Product descriptions don't list fabric weights first — they lead with the construction decision and why it was made that way. DMs get real responses, not copy-paste thank-yous. When something goes wrong in production, it gets posted with the exact mistake and what changed. The voice sounds like someone talking to their people — because that's exactly what it is.</div>
+    </div>
+
+    <div class="coach-note fi">
+      <div class="coach-note-label">Coaching Note</div>
+      The 70/30 split is the principle: 70% of what you post should be value — the perspective, the education, the process, the story. 30% is product showcase. Right now you might flip that ratio out of excitement about your product, which is natural — but the audience you need to build first is drawn in by the founder, not the catalog. Tyler the Creator, Nipsey Hussle, Spike Lee — every character in your Q8 answer built an audience around a point of view before they built a business model. Your voice is that point of view. Lead with it.
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 07: AUDIENCE -->
+<section id="s-audience">
+  <div class="wrap">
+    <div class="sec-num fi">07</div>
+    <h2 class="sec-title fi">Your <em>Audience</em></h2>
+
+    <div class="aud-row fi">
+      <div class="aud-k">Who</div>
+      <div class="aud-v">Young men 17–26 in urban areas. Predominantly Black and Brown. Working part-time or their first real job. Not broke, but not flush — money is a real variable in every purchase decision they make.</div>
+    </div>
+
+    <div class="aud-row fi">
+      <div class="aud-k">Psyche</div>
+      <div class="aud-v">Style-literate and proud of it. Knows the difference between a good fit and a great one. Thrifts not just for budget reasons but because they've learned that vintage has better construction than most new product at twice the price. Respects brands that are real — has a highly tuned BS detector from years of being marketed to, not marketed with.</div>
+    </div>
+
+    <div class="aud-row fi">
+      <div class="aud-k">Behavior</div>
+      <div class="aud-v">Mixes high and low constantly. Follows creators in the art, music, and fashion space more than traditional brand accounts. Shares things that make them look like they knew first. Buys from brands with a face behind them. Loyal once trust is earned — will tell three friends and post on their story unprompted if the product delivers.</div>
+    </div>
+
+    <div class="aud-row fi">
+      <div class="aud-k">Pain</div>
+      <div class="aud-v">Every brand that claims to understand their culture either prices them out of it or culturally extracts from them without investing back. The brands they can actually afford feel disposable. The brands worth owning aren't built for them — they're built for people who want to look like them. Nobody's filling the middle with something that actually respects their intelligence, their wallet, and their identity simultaneously.</div>
+    </div>
+
+    <div class="aud-row fi">
+      <div class="aud-k">Desire</div>
+      <div class="aud-v">A brand they can claim — not just wear. Something that makes them feel seen, not just styled. Quality they don't have to apologize for when people ask where it's from. A connection to a founder who's actually living the same life they are. To be early — to be the person who knew about this brand before it was everywhere.</div>
+    </div>
+
+    <div class="pull fi"><span>&ldquo;</span>He's up at 7AM for a shift he doesn't love, putting on a fit that makes the commute worth it — because how he shows up is the one thing he controls about his day.<span>&rdquo;</span></div>
+
+    <div class="coach-note fi">
+      <div class="coach-note-label">Coaching Note</div>
+      Here's the go-to-market approach for this audience: 1) Start organic, not paid. Your customer is on TikTok and Instagram Reels watching creators in the style, music, and culture space. Find three mid-size creators (50K–300K) who your customer already follows and study their content weekly. 2) Build your email and SMS list before your first drop — that's the Collection Phase of the drop model. A locked website with a phone number capture page two weeks before launch is not optional; it's the whole game. 3) Community before catalog — drop into existing communities (Discord servers, subreddits, local events) as a person first. Your customer needs to meet you before they buy from you.
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 08: POSITIONING -->
+<section id="s-position">
+  <div class="wrap">
+    <div class="sec-num fi">08</div>
+    <h2 class="sec-title fi">Brand <em>Positioning</em></h2>
+
+    <div class="pos-table fi">
+      <div class="pos-row">
+        <div class="pos-key">Category</div>
+        <div class="pos-val">Workwear-influenced streetwear — elevated basics and statement outerwear built to the durability standards of functional garments, sold at a price that respects the community it's made for.</div>
+      </div>
+      <div class="pos-row">
+        <div class="pos-key">Edge</div>
+        <div class="pos-val">Founder-IS-customer authenticity. You're not a brand interpreting street culture — you are street culture, building something specifically for people who've been priced out or overlooked by every brand that claims to represent them.</div>
+      </div>
+      <div class="pos-row">
+        <div class="pos-key">Hook</div>
+        <div class="pos-val"><em>"Identity armor for the people who've been building their identity from scratch."</em></div>
+      </div>
+      <div class="pos-row">
+        <div class="pos-key">Promise</div>
+        <div class="pos-val"><strong>Clothes that last, at a price that respects you, made by someone who actually knows what it costs to not be able to afford the brand you deserved.</strong></div>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <div class="opp fi">
+      <div class="opp-x">&times;</div>
+      <div class="opp-text"><strong>Disposable Fashion</strong> &mdash; Clothes designed to fall apart because the business model depends on you buying again in 90 days. Every piece this brand makes is built to outlast the trend cycle, because durability is the most radical thing you can offer someone on a budget.</div>
+    </div>
+
+    <div class="opp fi">
+      <div class="opp-x">&times;</div>
+      <div class="opp-text"><strong>Cultural Extraction</strong> &mdash; Brands that use Black aesthetics, Black music, and Black cultural capital to build wealth and then invest none of it back into the communities they profit from. This brand's entire foundation is a direct opposition to that model.</div>
+    </div>
+
+    <div class="opp fi">
+      <div class="opp-x">&times;</div>
+      <div class="opp-text"><strong>Luxury Gatekeeping</strong> &mdash; The idea that quality clothing is a reward for a certain level of financial access. Price integrity is a political position here, not a market concession. The customer deserves good product without having to wait until they can afford to feel respected.</div>
+    </div>
+
+    <div class="opp fi">
+      <div class="opp-x">&times;</div>
+      <div class="opp-text"><strong>Permission Culture</strong> &mdash; The creative gatekeeping that makes young founders — especially young Black founders — feel like they need credentials, connections, or capital to start. This brand's public building process is a direct statement that the barrier is a lie.</div>
+    </div>
+
+    <div class="coach-note fi">
+      <div class="coach-note-label">Coaching Note</div>
+      Positioning is only as strong as the operational proof points behind it. "Built to last" has to show up in the fabric weight you choose, the seam construction you spec, and the honest product description that tells your customer exactly what they're getting and why. "Price integrity" means you explain your cost structure publicly — what it costs to make something real and why your margin is what it is. Don't just claim the position — document the decisions that back it up. That documentation IS your content, and it's the thing that makes your audience trust you before they've held a single piece.
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 09: SCORE -->
+<section id="s-score">
+  <div class="wrap">
+    <div class="sec-num fi">09</div>
+    <h2 class="sec-title fi">Brand Readiness <em>Score</em></h2>
+
+    <div class="score-wrap fi">
+      <div class="score-ring-wrap">
+        <svg width="160" height="160" viewBox="0 0 160 160">
+          <defs>
+            <linearGradient id="scoreGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:#C4A855"/>
+              <stop offset="100%" style="stop-color:#D4BD7A"/>
+            </linearGradient>
+          </defs>
+          <circle cx="80" cy="80" r="60" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="10"/>
+          <circle id="scoreCircle" cx="80" cy="80" r="60" fill="none" stroke="url(#scoreGrad)" stroke-width="10"
+            stroke-linecap="round" stroke-dasharray="377" stroke-dashoffset="377"
+            transform="rotate(-90 80 80)"/>
+          <text x="80" y="80" class="score-num" id="scoreText">0</text>
+          <text x="80" y="102" class="score-unit" text-anchor="middle" font-size="13" font-family="Inter,sans-serif" fill="rgba(255,255,255,0.4)">/100</text>
+        </svg>
+      </div>
+
+      <div class="score-breakdown">
+
+        <div class="sb-item sb-hi" data-score="9">
+          <div class="sb-label">Clarity of Vision</div>
+          <div class="sb-bar-wrap"><div class="sb-bar"></div></div>
+          <div class="sb-score">9</div>
+        </div>
+
+        <div class="sb-item sb-hi" data-score="9">
+          <div class="sb-label">Origin Story Strength</div>
+          <div class="sb-bar-wrap"><div class="sb-bar"></div></div>
+          <div class="sb-score">9</div>
+        </div>
+
+        <div class="sb-item sb-hi" data-score="8">
+          <div class="sb-label">Audience Definition</div>
+          <div class="sb-bar-wrap"><div class="sb-bar"></div></div>
+          <div class="sb-score">8</div>
+        </div>
+
+        <div class="sb-item sb-mid" data-score="7">
+          <div class="sb-label">Product Strategy</div>
+          <div class="sb-bar-wrap"><div class="sb-bar"></div></div>
+          <div class="sb-score">7</div>
+        </div>
+
+        <div class="sb-item sb-hi" data-score="9">
+          <div class="sb-label">Competitive Moat</div>
+          <div class="sb-bar-wrap"><div class="sb-bar"></div></div>
+          <div class="sb-score">9</div>
+        </div>
+
+        <div class="sb-item sb-mid" data-score="7">
+          <div class="sb-label">Execution Readiness</div>
+          <div class="sb-bar-wrap"><div class="sb-bar"></div></div>
+          <div class="sb-score">7</div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="coach-note fi" style="margin-top:32px;">
+      <div class="coach-note-label">Assessment</div>
+      Jaylen, you're coming in with one of the strongest Brand DNA scores we see at the pre-launch stage. Your origin story, your positioning clarity, and your competitive moat are elite — and that's not something you can be taught, it's something you lived. The two areas holding you back from a 90+ score are product strategy and execution readiness — both of which come down to the same thing: you need to stop thinking in systems and start building in one. You've got everything the Foundation phase requires. The next 90 days are about Phase 2: pick your hero SKU, get it sampled, document everything publicly, and build your list before you drop. The blueprint is clear. Now it's time to build.
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section id="cta">
+  <div class="wrap">
+    <h2 class="fi">Ready to <em>build?</em></h2>
+    <p class="fi">Your blueprint is clear. The next step is turning it into a brand that ships.</p>
+    <a href="#" class="cta-btn fi">Apply to the Program →</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div>18 Question Framework</div>
+</footer>
+
+<script>
+  // Accordion
+  function tog(el) {
+    const qa = el.closest('.qa');
+    qa.classList.toggle('open');
+  }
+
+  // Persona switcher
+  function switchPersona(btn, persona) {
+    document.querySelectorAll('.ps-btn').forEach(b => b.classList.remove('on'));
+    document.querySelectorAll('.profile-card').forEach(c => c.classList.remove('on'));
+    btn.classList.add('on');
+    const card = document.querySelector(`.profile-card[data-persona="${persona}"]`);
+    if (card) card.classList.add('on');
+    const stageMap = { nolaunch: 'Starting to Build', stalled: 'Launched but Stuck' };
+    document.getElementById('hStage').textContent = stageMap[persona] || 'Starting to Build';
+  }
+
+  // Nav pills
+  document.querySelectorAll('.nav-pill').forEach(pill => {
+    pill.addEventListener('click', () => {
+      document.querySelectorAll('.nav-pill').forEach(p => p.classList.remove('on'));
+      pill.classList.add('on');
+      const target = document.getElementById(pill.dataset.to);
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+
+  // Scroll spy
+  const sections = ['s-method','s-persona','s-answers','s-origin','s-mission','s-values','s-voice','s-audience','s-position','s-score'];
+  function updateNav() {
+    let current = sections[0];
+    for (const id of sections) {
+      const el = document.getElementById(id);
+      if (el) {
+        const rect = el.getBoundingClientRect();
+        if (rect.top <= 120) current = id;
+      }
+    }
+    document.querySelectorAll('.nav-pill').forEach(p => {
+      p.classList.toggle('on', p.dataset.to === current);
+    });
+  }
+  window.addEventListener('scroll', updateNav, { passive: true });
+
+  // Fade-in observer
+  const fiObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('vis'); fiObs.unobserve(e.target); } });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.fi').forEach(el => fiObs.observe(el));
+
+  // Score animation
+  const scores = [9, 9, 8, 7, 9, 7];
+  const overall = Math.round(scores.reduce((a, b) => a + b, 0) / scores.length * 10);
+
+  const scoreObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      scoreObs.unobserve(e.target);
+
+      // Animate bars
+      document.querySelectorAll('.sb-item').forEach((item, i) => {
+        const score = parseInt(item.dataset.score) || scores[i] || 7;
+        const bar = item.querySelector('.sb-bar');
+        setTimeout(() => {
+          if (bar) bar.style.width = (score / 10 * 100) + '%';
+        }, 200 + i * 120);
+      });
+
+      // Animate circle
+      const circle = document.getElementById('scoreCircle');
+      const scoreText = document.getElementById('scoreText');
+      const circumference = 377;
+      const duration = 1400;
+      const start = performance.now();
+      function animateScore(now) {
+        const progress = Math.min((now - start) / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        const currentScore = Math.round(eased * overall);
+        const offset = circumference - (eased * overall / 100) * circumference;
+        circle.style.strokeDashoffset = offset;
+        scoreText.textContent = currentScore;
+        if (progress < 1) requestAnimationFrame(animateScore);
+        else {
+          scoreText.textContent = overall;
+          document.getElementById('hScore').textContent = overall + '/100';
+        }
+      }
+      requestAnimationFrame(animateScore);
+    });
+  }, { threshold: 0.25 });
+
+  const scoreSection = document.getElementById('s-score');
+  if (scoreSection) scoreObs.observe(scoreSection);
+</script>
+</body>
+</html>
