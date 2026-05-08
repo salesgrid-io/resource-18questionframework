@@ -12,6 +12,7 @@ import {
 } from "@/lib/automation/db"
 import { logError, logInfo } from "@/lib/automation/logger"
 import {
+  appendMainLeadResponseToSheet,
   createCloseActivity,
   createResultIdentifiers,
   formatIntegrationError,
@@ -92,6 +93,15 @@ export async function processAutomation(payload: FunnelEventPayload, leadId: str
       resultUrl,
       metadata: typeof emailResult === "object" ? (emailResult as Record<string, unknown>) : null,
     })
+
+    // Google Sheets - fire and forget, don't block blueprint generation
+    try {
+      await runStep(runId, "google_sheets_append", "google-sheets", () =>
+        appendMainLeadResponseToSheet({ ...payload, leadId }),
+      )
+    } catch (sheetsError) {
+      await logError("automation", "Google Sheets append failed but continuing", { runId, leadId, error: formatIntegrationError(sheetsError) })
+    }
 
     // Close sync - don't let failures block blueprint generation
     try {
