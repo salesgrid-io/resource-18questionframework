@@ -402,6 +402,42 @@ export async function createCloseActivity(closeLeadId: string) {
   }
 }
 
+export async function addContactToSendBlue(lead: LeadRecord) {
+  if (!lead.phone) {
+    return { skipped: true, reason: "No phone number" as const }
+  }
+
+  const firstName = lead.firstName?.trim() || lead.quiz?.name?.split(" ")[0] || ""
+  const lastName = lead.lastName?.trim() || lead.quiz?.name?.split(" ").slice(1).join(" ") || ""
+  const e164 = lead.phone.startsWith("+") ? lead.phone : `+1${lead.phone.replace(/\D/g, "")}`
+  const countryPrefix = lead.countryCode ? lead.countryCode.replace(/^\+/, "") : ""
+  const fullPhone = lead.phone.startsWith("+") ? lead.phone : `+${countryPrefix}${lead.phone.replace(/\D/g, "")}`
+
+  const response = await fetch("https://api.sendblue.co/accounts/contacts", {
+    method: "POST",
+    headers: {
+      "sb-api-key-id": env.sendblueKeyId!,
+      "sb-api-secret-key": env.sendblueSecretKey!,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      number: fullPhone || e164,
+      first_name: firstName,
+      last_name: lastName,
+      email: lead.email || "",
+      company_name: "18questionframework",
+      tags: ["#opt-in"],
+    }),
+  })
+
+  if (!response.ok) {
+    throw new Error(`SendBlue contact creation failed with ${response.status}: ${await response.text()}`)
+  }
+
+  const data = await response.json()
+  return { skipped: false, contact: data.contact }
+}
+
 export function createResultIdentifiers() {
   const publicId = randomUUID()
   return {
