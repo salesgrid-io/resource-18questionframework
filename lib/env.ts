@@ -46,8 +46,6 @@ export const env = {
   closeActivityNewLead: optional("CLOSE_ACTIVITY_NEW_LEAD"),
   closeActivityCfDate: optional("CLOSE_ACTIVITY_CF_DATE"),
   closeActivityCfType: optional("CLOSE_ACTIVITY_CF_TYPE"),
-  sendblueKeyId: optional("SENDBLUE_KEY_ID"),
-  sendblueSecretKey: optional("SENDBLUE_SECRET_KEY"),
 } as const
 
 export function isConfigured(...values: Array<string | null>) {

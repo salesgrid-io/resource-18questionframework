@@ -27,7 +27,6 @@ export type FunnelEventType =
   | "results_emailed"
   | "close_synced"
   | "close_activity_created"
-  | "sendblue_synced"
   | "results_viewed"
   | "automation_failed"
 
