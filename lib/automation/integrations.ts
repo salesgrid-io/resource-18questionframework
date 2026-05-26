@@ -426,7 +426,7 @@ export async function addContactToSendBlue(lead: LeadRecord) {
       last_name: lastName,
       email: lead.email || "",
       company_name: "18questionframework",
-      tags: ["#opt-in"],
+      tags: ["opt-in"],
     }),
   })
 
