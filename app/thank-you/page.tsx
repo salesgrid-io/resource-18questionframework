@@ -4,7 +4,7 @@ import { Suspense } from "react"
 import { useSearchParams } from "next/navigation"
 import { CheckCircle, Mail, ArrowRight, Loader2 } from "lucide-react"
 
-const LIVE_CLASS_URL = "https://4bucketframework.com/liveclass"
+const WEBINAR_POST_OPT_IN_URL = "https://4bucketframework.com/get-your-ticket"
 
 function ThankYouContent() {
   const searchParams = useSearchParams()
@@ -50,7 +50,7 @@ function ThankYouContent() {
         {/* CTA Button */}
         <div className="space-y-6">
           <a
-            href={LIVE_CLASS_URL}
+            href={WEBINAR_POST_OPT_IN_URL}
             className="group inline-flex items-center justify-center gap-3 w-full px-8 py-4 bg-gradient-to-r from-[var(--bp-gold)] to-[#d4c08a] text-[var(--bp-bg-primary)] font-semibold text-lg rounded-lg hover:opacity-90 transition-all duration-300 hover:scale-[1.02] shadow-lg shadow-[var(--bp-gold)]/20"
           >
             Join the Live Class

@@ -13,14 +13,14 @@ const CLOSE_DEFAULTS = {
   sourcePlatformFieldId: "cf_ZnIXR9jCO4pI9t0WDBT9ozvBCAA3dli1XzK2dgMVSGD",
   sourceFunnelFieldId: "cf_QHnC4lKyZaKjpIjoSoon2exp9oRWSrEMeRMbBidAS1Y",
   sourceContentFieldId: "cf_pjUMCZWvAdpTsyqiX8K3xbb3WVsDNimD3ggk5sC4Fub",
-  leadEntrySourceValue: "18Q Funnel Opt-in",
-  sourceFunnelValue: "18Q Funnel Opt-in",
+  leadEntrySourceValue: "Resource 18q Framework",
+  sourceFunnelValue: "Resource 18q Framework",
   sourcePlatformValue: "18 Question Framework",
   // Custom Activity: 01.1 New Activity
   newActivityTypeId: "actitype_4qhrkF0QsXr21eK3o2qNr3",
   activityDateFieldId: "cf_dowXZCDf79QMkymHkUShoaL7fIn7QcLI6ywfIIIEpKd",
   activityTypeFieldId: "cf_QcUPqKkOHBQzp5grl1v203CBMEftfHMWNxvDc60Z5CW",
-  activityTypeValue: "18Q Funnel Opt-in",
+  activityTypeValue: "Resource 18q Framework",
 } as const
 
 function summarizeError(error: unknown) {
@@ -102,8 +102,8 @@ export async function appendMainLeadResponseToSheet(payload: FunnelEventPayload)
       countryCode: payload.optIn?.countryCode ?? "",
     },
     attribution: {
-      leadEntrySource: "18Q Funnel Opt-in",
-      sourceFunnel: "18Q Funnel Opt-in",
+      leadEntrySource: CLOSE_DEFAULTS.leadEntrySourceValue,
+      sourceFunnel: CLOSE_DEFAULTS.sourceFunnelValue,
       sourceContent: payload.utm?.utm_content ?? "",
       sourcePlatform: payload.utm?.utm_source ?? "",
       utm_source: payload.utm?.utm_source ?? "",
@@ -122,14 +122,14 @@ export async function appendMainLeadResponseToSheet(payload: FunnelEventPayload)
   return appendSheetRow("Main", [
     new Date().toLocaleString("en-US", { hour12: false }),
     randomUUID(),
-    "18Q Funnel Opt-in",
+    CLOSE_DEFAULTS.leadEntrySourceValue,
     fullName,
     payload.optIn?.email ?? "",
     countryCode,
     phone,
     payload.utm?.utm_source ?? "",
     payload.utm?.utm_campaign ?? "",
-    "18Q Funnel Opt-in",
+    CLOSE_DEFAULTS.sourceFunnelValue,
     "",
     payload.utm?.utm_content ?? "",
     JSON.stringify(responsesBlob),

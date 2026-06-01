@@ -65,6 +65,8 @@ const emptyBookingState: BookingFormState = {
   whyImpact: "",
 }
 
+const WEBINAR_POST_OPT_IN_URL = "https://4bucketframework.com/get-your-ticket"
+
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
 function GoldButton({
@@ -334,7 +336,7 @@ export default function BrandAuditFunnel() {
     })
     setDqSubmitted(true)
     clearPersistedFunnelState()
-    window.location.href = "https://4bucketframework.com/liveclass"
+    window.location.href = WEBINAR_POST_OPT_IN_URL
   }
 
   // Hide header on quiz screen (it has its own progress bar)
@@ -911,7 +913,7 @@ function DisqualifiedScreen({
   useEffect(() => {
     if (submitted) {
       const timer = setTimeout(() => {
-        window.location.href = "https://4bucketframework.com/liveclass"
+        window.location.href = WEBINAR_POST_OPT_IN_URL
       }, 2000)
       return () => clearTimeout(timer)
     }
