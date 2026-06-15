@@ -238,7 +238,7 @@ export async function generateBlueprintContent(
   const userPrompt = buildBlueprintUserPrompt(quiz)
 
   const message = await client.messages.create({
-    model: "claude-sonnet-4-20250514",
+    model: "claude-sonnet-4-6",
     max_tokens: 8000,
     system: BLUEPRINT_SYSTEM_PROMPT,
     messages: [
