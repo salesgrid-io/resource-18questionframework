@@ -12,6 +12,7 @@ import {
 } from "@/lib/automation/db"
 import { logError, logInfo } from "@/lib/automation/logger"
 import {
+  addContactToSendBlue,
   createCloseActivity,
   createResultIdentifiers,
   formatIntegrationError,
@@ -122,6 +123,16 @@ export async function processAutomation(payload: FunnelEventPayload, leadId: str
       }
     } catch (closeError) {
       await logError("automation", "Close sync failed but continuing", { runId, leadId, error: formatIntegrationError(closeError) })
+    }
+
+    // SendBlue — add contact with opt-in tag
+    try {
+      const sendBlueSync = await runStep(runId, "sendblue_add_contact", "sendblue", () => addContactToSendBlue(lead))
+      if (!("skipped" in sendBlueSync && sendBlueSync.skipped)) {
+        await saveEvent({ ...payload, leadId, eventType: "sendblue_synced" })
+      }
+    } catch (sendblueError) {
+      await logError("automation", "SendBlue sync failed but continuing", { runId, leadId, error: formatIntegrationError(sendblueError) })
     }
 
     // Generate blueprint (slow) - email already sent, user can wait or check later
