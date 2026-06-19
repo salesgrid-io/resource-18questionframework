@@ -5,7 +5,7 @@ import { logWarn } from "@/lib/automation/logger"
 import { sendEmail, isEmailConfigured } from "@/lib/email"
 import { BlueprintEmail } from "@/components/emails/BlueprintEmail"
 import { generateBlueprintContent } from "@/lib/claude"
-import type { BlueprintContent, FunnelEventPayload, LeadRecord } from "@/lib/automation/types"
+import type { BlueprintContent, FunnelEventPayload, LeadRecord, QuizFormState } from "@/lib/automation/types"
 
 const CLOSE_DEFAULTS = {
   defaultStatusId: "stat_JyOefbVWUsX5gGOOn6GCJ26aFku1R8KWYdhTlobyfcI",
@@ -400,6 +400,75 @@ export async function createCloseActivity(closeLeadId: string) {
   return {
     activityId: createdActivity.id as string,
   }
+}
+
+const QUIZ_QUESTIONS: Array<{ field: keyof QuizFormState; label: string }> = [
+  { field: "name", label: "What is your name?" },
+  { field: "age", label: "How old are you?" },
+  { field: "situation", label: "What describes your current situation with your brand?" },
+  { field: "changedWorldview", label: "What's something you've been through that changed how you see the world?" },
+  { field: "capableOfImpact", label: "Do you see yourself as a person capable of creating something impactful?" },
+  { field: "notUnderstood", label: "What's one thing about yourself that you wish people understood more?" },
+  { field: "moneyNoFactor", label: "If money wasn't a factor, what would you spend your time doing?" },
+  { field: "nichedInterest", label: "What is a niched interest that you enjoy?" },
+  { field: "closestExpert", label: "What is something you feel you are closest to being an expert in?" },
+  { field: "characters", label: "List 3-5 fictional or nonfictional characters you resonate with or are inspired by" },
+  { field: "thePast", label: "What past experiences shaped who you are today?" },
+  { field: "theTurningPoint", label: "What made you decide to build this brand?" },
+  { field: "thePresent", label: "What are you creating and why?" },
+  { field: "theFuture", label: "What do you envision for your best self in the future?" },
+  { field: "values", label: "What values do you hold close?" },
+  { field: "against", label: "What do you (your brand) stand AGAINST?" },
+  { field: "whyImpact", label: "Why is it so important you make impact?" },
+  { field: "targetPerson", label: "What type of person do you want to reach?" },
+  { field: "whatToSell", label: "What do you want to sell to them?" },
+  { field: "whyBuyFromYou", label: "Why are they going to buy from you instead of another brand that offers the same thing to the same people?" },
+]
+
+function formatQuizQaNote(quiz: Partial<QuizFormState>): string {
+  const lines: string[] = ["=== 18 Question Framework Responses ===", ""]
+  for (let i = 0; i < QUIZ_QUESTIONS.length; i++) {
+    const { field, label } = QUIZ_QUESTIONS[i]
+    const answer = quiz[field]
+    if (answer == null || answer === "" || (Array.isArray(answer) && answer.length === 0)) continue
+    const answerText = Array.isArray(answer) ? answer.join(", ") : String(answer)
+    lines.push(`Q${i + 1}: ${label}`)
+    lines.push(`A: ${answerText}`)
+    lines.push("")
+  }
+  return lines.join("\n")
+}
+
+const CLOSE_OPPORTUNITY_DEFAULTS = {
+  salesPipelineId: "pipe_3aer087EJh3dtsAreedIcr",
+  defaultStatusId: "stat_ZmYuvHt6TdXNq2zCLiz3y093vkl7PbOTS6f7qU9KXyy", // Call Booked
+} as const
+
+export async function createCloseOpportunity(closeLeadId: string, lead: LeadRecord) {
+  if (!env.closeApiKey) {
+    return { skipped: true, reason: "Close API not configured" as const }
+  }
+
+  const note = formatQuizQaNote(lead.quiz ?? {})
+  const opportunityPayload = {
+    lead_id: closeLeadId,
+    pipeline_id: CLOSE_OPPORTUNITY_DEFAULTS.salesPipelineId,
+    status_id: CLOSE_OPPORTUNITY_DEFAULTS.defaultStatusId,
+    note,
+  }
+
+  const response = await fetch(`${env.closeApiBaseUrl}/opportunity/`, {
+    method: "POST",
+    headers: closeHeaders(),
+    body: JSON.stringify(opportunityPayload),
+  })
+
+  if (!response.ok) {
+    throw new Error(`Close opportunity create failed with ${response.status}: ${await response.text()}`)
+  }
+
+  const created = await response.json()
+  return { skipped: false, opportunityId: created.id as string }
 }
 
 export async function addContactToSendBlue(lead: LeadRecord) {

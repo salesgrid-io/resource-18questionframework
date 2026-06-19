@@ -14,6 +14,7 @@ import { logError, logInfo } from "@/lib/automation/logger"
 import {
   addContactToSendBlue,
   createCloseActivity,
+  createCloseOpportunity,
   createResultIdentifiers,
   formatIntegrationError,
   generateBlueprintFromClaude,
@@ -119,6 +120,18 @@ export async function processAutomation(payload: FunnelEventPayload, leadId: str
           })
         } catch (activityError) {
           await logError("automation", "Close activity creation failed but continuing", { runId, leadId, error: formatIntegrationError(activityError) })
+        }
+
+        // Create opportunity in Sales pipeline with Q&A in opportunity details
+        try {
+          await runStep(runId, "close_create_opportunity", "close", () => createCloseOpportunity(closeSync.closeLeadId!, lead))
+          await saveEvent({
+            ...payload,
+            leadId,
+            eventType: "close_opportunity_created",
+          })
+        } catch (opportunityError) {
+          await logError("automation", "Close opportunity creation failed but continuing", { runId, leadId, error: formatIntegrationError(opportunityError) })
         }
       }
     } catch (closeError) {
