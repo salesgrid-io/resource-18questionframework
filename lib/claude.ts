@@ -239,7 +239,7 @@ export async function generateBlueprintContent(
 
   const message = await client.messages.create({
     model: "claude-sonnet-4-6",
-    max_tokens: 8000,
+    max_tokens: 16000,
     system: BLUEPRINT_SYSTEM_PROMPT,
     messages: [
       {
@@ -249,14 +249,27 @@ export async function generateBlueprintContent(
     ],
   })
 
+  // Detect truncated responses before attempting to parse
+  if (message.stop_reason === "max_tokens") {
+    throw new Error("Claude response was truncated (hit max_tokens limit). Blueprint JSON is incomplete.")
+  }
+
   // Extract the text content from the response
   const textContent = message.content.find((block) => block.type === "text")
   if (!textContent || textContent.type !== "text") {
     throw new Error("No text content in Claude response")
   }
 
-  // Parse the JSON response
-  const jsonText = textContent.text.trim()
+  // Strip markdown code fences if present, then parse JSON
+  let jsonText = textContent.text.trim()
+  if (jsonText.startsWith("```")) {
+    jsonText = jsonText
+      .replace(/^```json\s*/i, "")
+      .replace(/^```\s*/i, "")
+      .replace(/\s*```$/, "")
+      .trim()
+  }
+
   const blueprintContent = JSON.parse(jsonText) as BlueprintContent
 
   return blueprintContent
