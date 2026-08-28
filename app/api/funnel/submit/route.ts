@@ -5,6 +5,8 @@ import { logError, logInfo } from "@/lib/automation/logger"
 import { processAutomation } from "@/lib/automation/orchestrator"
 import type { FunnelEventPayload, QuizFormState, OptInFormState, UtmData } from "@/lib/automation/types"
 
+export const maxDuration = 300
+
 interface SubmitRequestBody {
   quiz: Partial<QuizFormState>
   optIn: OptInFormState

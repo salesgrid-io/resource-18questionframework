@@ -6,6 +6,8 @@ import { generateBlueprintFromClaude } from "@/lib/automation/integrations"
 import { logError, logInfo } from "@/lib/automation/logger"
 import type { LeadRecord, QuizFormState, OptInFormState, BlueprintContent, BlueprintDocument } from "@/lib/automation/types"
 
+export const maxDuration = 300
+
 interface GenerateRequestBody {
   leadId?: string
   quizData?: Partial<QuizFormState>
