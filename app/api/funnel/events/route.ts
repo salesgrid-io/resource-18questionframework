@@ -6,6 +6,8 @@ import { logError, logInfo } from "@/lib/automation/logger"
 import { processAutomation } from "@/lib/automation/orchestrator"
 import type { FunnelEventPayload } from "@/lib/automation/types"
 
+export const maxDuration = 300
+
 export async function POST(request: NextRequest) {
   try {
     const payload = (await request.json()) as FunnelEventPayload
