@@ -14,7 +14,23 @@ const COLLECTIONS = {
   blueprints: "blueprints",
 } as const
 
+// This ran on every /api/funnel/events request - 7 createIndex commands per quiz
+// step - which dominated mongod's load on a box that is already memory-starved.
+// Indexes are immutable here, so build them once per process instead.
+let indexesPromise: Promise<void> | undefined
+
 export async function ensureIndexes() {
+  if (!indexesPromise) {
+    indexesPromise = buildIndexes().catch((error) => {
+      // Let a later request retry rather than caching the failure forever.
+      indexesPromise = undefined
+      throw error
+    })
+  }
+  return indexesPromise
+}
+
+async function buildIndexes() {
   const db = await getDb()
   await Promise.all([
     db.collection(COLLECTIONS.leads).createIndex({ email: 1 }),
