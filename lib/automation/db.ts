@@ -5,6 +5,7 @@ import type { AutomationRunStatus, AutomationStepStatus, BlueprintContent, Bluep
 type MaybeId = string | null | undefined
 
 const COLLECTIONS = {
+  pregeneratedBlueprints: "pregen_blueprints",
   leads: "leads",
   sessions: "funnel_sessions",
   events: "funnel_events",
@@ -324,4 +325,27 @@ export async function getRunById(id: string) {
 export async function listRecentLeads(limit = 50) {
   const db = await getDb()
   return db.collection<LeadRecord>(COLLECTIONS.leads).find({}).sort({ updatedAt: -1 }).limit(limit).toArray()
+}
+
+export async function initPregeneratedBlueprint(pregenId: string) {
+  const db = await getDb()
+  await db.collection(COLLECTIONS.pregeneratedBlueprints).insertOne({
+    pregenId,
+    status: "pending",
+    content: null,
+    createdAt: new Date(),
+  })
+}
+
+export async function completePregeneratedBlueprint(pregenId: string, content: BlueprintContent) {
+  const db = await getDb()
+  await db.collection(COLLECTIONS.pregeneratedBlueprints).updateOne(
+    { pregenId },
+    { $set: { status: "ready", content, completedAt: new Date() } },
+  )
+}
+
+export async function getPregeneratedBlueprint(pregenId: string) {
+  const db = await getDb()
+  return db.collection(COLLECTIONS.pregeneratedBlueprints).findOne({ pregenId })
 }

@@ -129,6 +129,7 @@ export default function BrandAuditFunnel() {
   const [optInSubmitting, setOptInSubmitting] = useState(false)
   const [pendingBlueprintUrl, setPendingBlueprintUrl] = useState<string | null>(null)
   const [pendingBlueprintId, setPendingBlueprintId] = useState<string | null>(null)
+  const [pregenId, setPregenId] = useState<string | null>(null)
 
   const buildPayload = useCallback((overrides: Partial<FunnelEventPayload>): FunnelEventPayload => {
     return {
@@ -181,7 +182,11 @@ export default function BrandAuditFunnel() {
     setBrowserId(nextBrowserId)
     setSessionId(nextSessionId)
 
-    if (persisted) {
+    if (persisted?.currentScreen === "generating") {
+      clearPersistedFunnelState()
+    }
+
+    if (persisted && persisted.currentScreen !== "generating") {
       const persistedScreen = persisted.currentScreen === "booking" ? "optin" : persisted.currentScreen
       setScreen(persistedScreen as Screen)
       setInitialQuizStep(persisted.currentQuizStep)
@@ -274,6 +279,31 @@ export default function BrandAuditFunnel() {
     goTo("analyzing")
   }
 
+  // Pre-generate the blueprint the moment the last question is answered.
+  //
+  // This used to fire on the "optin" screen, which is the LAST screen - the user
+  // types their email and submits within seconds, so generation had almost no
+  // head start and they sat through most of it (measured: only 13% of the last
+  // 300 runs completed in under 5s; the rest waited on an in-flight pregen).
+  // All 18 answers exist by the time we reach "analyzing", so firing here buys
+  // the whole analyzing + goodnews + opt-in-typing window as head start -
+  // comfortably more than the ~16s generation now takes.
+  //
+  // Listed as a set so a restored mid-funnel session still triggers it.
+  useEffect(() => {
+    const PREGEN_SCREENS: Screen[] = ["analyzing", "goodnews", "optin"]
+    // Disqualified leads never see a blueprint - don't spend tokens on them.
+    if (isDisqualified || !PREGEN_SCREENS.includes(screen) || pregenId) return
+    fetch("/api/blueprint/pregenerate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ quiz: quizData }),
+    })
+      .then((r) => r.json())
+      .then((data: { pregenId?: string }) => { if (data.pregenId) setPregenId(data.pregenId) })
+      .catch(() => {/* silently fail, will generate on submit */})
+  }, [screen, pregenId, quizData, isDisqualified])
+
   function handleAnalysisComplete() {
     void emitEvent({
       eventType: "analysis_completed",
@@ -283,21 +313,38 @@ export default function BrandAuditFunnel() {
     goTo("goodnews")
   }
 
-  // Poll for blueprint readiness when on generating screen
+  // Poll for blueprint readiness when on generating screen.
+  //
+  // Checks immediately rather than waiting for the first interval tick: with
+  // pre-generation now starting at "analyzing", the blueprint is usually
+  // already stored by the time the user submits, and a 3s first-tick delay was
+  // the only thing left making a ready page feel slow.
   useEffect(() => {
     if (screen !== "generating" || !pendingBlueprintId || !pendingBlueprintUrl) return
-    const interval = setInterval(async () => {
+
+    let cancelled = false
+    let timer: ReturnType<typeof setTimeout>
+
+    const check = async () => {
+      if (cancelled) return
       try {
         const res = await fetch(`/api/blueprint/${pendingBlueprintId}`)
         if (res.ok) {
-          clearInterval(interval)
+          cancelled = true
           window.location.href = pendingBlueprintUrl
+          return
         }
       } catch {
         // keep polling
       }
-    }, 3000)
-    return () => clearInterval(interval)
+      if (!cancelled) timer = setTimeout(check, 1500)
+    }
+
+    void check()
+    return () => {
+      cancelled = true
+      clearTimeout(timer)
+    }
   }, [screen, pendingBlueprintId, pendingBlueprintUrl])
 
   async function handleOptInComplete() {
@@ -312,6 +359,7 @@ export default function BrandAuditFunnel() {
         optIn: optInForm,
         quiz: quizData,
         booking: bookingForm,
+        pregenId,
       })
       clearPersistedFunnelState()
       const bpUrl = result?.blueprintUrl ?? null
@@ -320,8 +368,10 @@ export default function BrandAuditFunnel() {
         setPendingBlueprintUrl(bpUrl)
         setPendingBlueprintId(bpId)
         goTo("generating")
+      } else if (bpUrl) {
+        window.location.href = bpUrl
       } else {
-        window.location.href = bpUrl ?? "/results"
+        window.location.href = "/results"
       }
     } finally {
       setOptInSubmitting(false)
@@ -1006,6 +1056,9 @@ function GeneratingScreen({ firstName }: { firstName: string }) {
           Our AI is analyzing your 18 answers and crafting your personalized brand strategy.
         </p>
         <p className="text-sm text-white/30">This usually takes 15–30 seconds.</p>
+        <p className="text-sm text-[#b59e5f]/70 mt-2">
+          We&apos;ll email you the link when it&apos;s ready — feel free to close this tab and check your inbox.
+        </p>
       </motion.div>
     </div>
   )

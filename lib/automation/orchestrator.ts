@@ -8,8 +8,7 @@ import {
   getLeadById,
   insertLog,
   saveEvent,
-  updateLead,
-} from "@/lib/automation/db"
+  updateLead, getPregeneratedBlueprint } from "@/lib/automation/db"
 import { logError, logInfo } from "@/lib/automation/logger"
 import {
   addContactToSendBlue,
@@ -22,7 +21,7 @@ import {
   sendResultsEmail,
   syncLeadToClose,
 } from "@/lib/automation/integrations"
-import type { FunnelEventPayload } from "@/lib/automation/types"
+import type { FunnelEventPayload, BlueprintContent } from "@/lib/automation/types"
 
 async function runStep<T>(
   runId: string,
@@ -148,10 +147,36 @@ export async function processAutomation(payload: FunnelEventPayload, leadId: str
       await logError("automation", "SendBlue sync failed but continuing", { runId, leadId, error: formatIntegrationError(sendblueError) })
     }
 
-    // Generate blueprint (slow) - email already sent, user can wait or check later
-    const blueprintResult = await runStep(runId, "generate_blueprint", "anthropic", () =>
-      generateBlueprintFromClaude({ lead, resultUrlPlaceholder: resultUrl }),
-    )
+    // Generate blueprint - or reuse the copy pre-generated during the quiz.
+    //
+    // The funnel fires /api/blueprint/pregenerate as soon as the last question
+    // is answered, so by the time the user finishes the opt-in form the
+    // blueprint is usually already built. Reusing it makes this step ~instant
+    // and avoids paying for the same generation twice.
+    let blueprintResult: { blueprint: BlueprintContent; rawResponse: unknown }
+    if (payload.pregenId) {
+      let pregenDoc = await getPregeneratedBlueprint(payload.pregenId)
+      const deadline = Date.now() + 120_000
+      while (pregenDoc?.status === "pending" && Date.now() < deadline) {
+        await new Promise((r) => setTimeout(r, 1500))
+        pregenDoc = await getPregeneratedBlueprint(payload.pregenId)
+      }
+      if (pregenDoc?.status === "ready" && pregenDoc.content) {
+        blueprintResult = {
+          blueprint: pregenDoc.content as BlueprintContent,
+          rawResponse: { source: "pregenerated", pregenId: payload.pregenId },
+        }
+      } else {
+        // Pregen failed or timed out - generate fresh.
+        blueprintResult = await runStep(runId, "generate_blueprint", "anthropic", () =>
+          generateBlueprintFromClaude({ lead, resultUrlPlaceholder: resultUrl }),
+        )
+      }
+    } else {
+      blueprintResult = await runStep(runId, "generate_blueprint", "anthropic", () =>
+        generateBlueprintFromClaude({ lead, resultUrlPlaceholder: resultUrl }),
+      )
+    }
 
     await runStep(runId, "store_blueprint", "mongo", async () => {
       await createBlueprint(leadId, publicId, blueprintResult.blueprint, blueprintResult.rawResponse)

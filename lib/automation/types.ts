@@ -114,6 +114,8 @@ export interface StoredBlueprintRecord {
 }
 
 export interface FunnelEventPayload {
+  /** Set when the blueprint was pre-generated during the quiz; lets the orchestrator reuse it instead of regenerating. */
+  pregenId?: string | null
   sessionId: string
   browserId: string
   leadId?: string | null

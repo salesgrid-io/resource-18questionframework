@@ -226,51 +226,214 @@ Output ONLY the JSON object, no markdown code fences or explanations.`
 }
 
 /**
- * Generates blueprint content using Claude API
- * @param quiz - The quiz form state containing all user answers
- * @returns Structured BlueprintContent
- * @throws Error if API is not configured or request fails
+ * Model used for blueprint generation. Env-overridable so it can be retuned
+ * without a deploy.
+ *
+ * claude-haiku-4-5 replaces claude-sonnet-4-6 here: measured end-to-end on the
+ * production prompt it is both slightly faster (~110 vs ~100 output tok/s) and
+ * produces deeper feedback (~450 vs ~337 chars per item).
  */
-export async function generateBlueprintContent(
-  quiz: Partial<QuizFormState>
-): Promise<BlueprintContent> {
-  const client = getAnthropicClient()
-  const userPrompt = buildBlueprintUserPrompt(quiz)
+function blueprintModel(): string {
+  return process.env.BLUEPRINT_MODEL?.trim() || "claude-haiku-4-5"
+}
 
+/**
+ * The 13 questions that get individual feedback cards, split into balanced
+ * groups that are generated in parallel.
+ *
+ * WHY: measured over 1,698 production runs the single blueprint call averaged
+ * 77s (max 246s) - 94% of the whole automation pipeline, which otherwise
+ * totals ~4.6s. The blueprint is ~8,000-11,000 output tokens and every model
+ * in this class emits ~100 tokens/sec, so a single call can't be made fast by
+ * swapping models (measured: gpt-5-mini 95-119s, haiku 71s, sonnet-4-6 77s).
+ * The only lever that works is generating fewer tokens per call and running
+ * the calls concurrently - wall clock becomes the slowest leg, not the sum.
+ * Measured 3-way: 31.8s vs 77s. These 4 balanced legs land at ~15-20s.
+ */
+const FEEDBACK_GROUPS: string[][] = [
+  ["Q2", "Q3", "Q4", "Q5"],
+  ["Q6", "Q7", "Q9"],
+  ["Q10", "Q11", "Q14"],
+  ["Q16", "Q17", "Q18"],
+]
+
+/**
+ * The non-feedback sections, split into three parallel legs.
+ *
+ * WHY THE SPLIT: with the feedback cards parallelised, a single "everything
+ * else" leg became the long pole - measured 46.8s / 3,876 output tokens while
+ * all four feedback legs finished in 8-14s. Wall clock is the slowest leg, so
+ * the long pole is the only thing worth cutting. These three are balanced by
+ * expected output size (originStory alone is ~2,000+ chars).
+ */
+const NARRATIVE_LEGS: Array<{ label: string; keys: string[]; spec: string }> = [
+  {
+    label: "core",
+    keys: ["heroMeta", "personas", "scores"],
+    spec: `- heroMeta: { name (string, from Q1), age (string, from Q1), stage (string), readinessScore (number) }.
+- personas.noLaunch and personas.stalled: 420-560 characters each (3-4 sentences).
+- scores: numbers for clarityOfVision, originStoryStrength, audienceDefinition, productStrategy, competitiveMoat, executionReadiness and overall, plus assessment as a string. Be honest; do not inflate to flatter.`,
+  },
+  {
+    label: "story",
+    keys: ["originStory", "missionVision"],
+    spec: `- originStory: a first-person narrative of at least 2,000 characters, in their voice, built from their actual answers.
+- missionVision: fully populated.`,
+  },
+  {
+    label: "values",
+    keys: ["values", "valuesCoachingNote"],
+    spec: `- values: exactly 4 entries, each with a name and a description of at least 200 characters.
+- valuesCoachingNote: required and fully populated.`,
+  },
+  {
+    label: "market",
+    keys: ["voice", "audience", "positioning"],
+    spec: `- voice, audience, positioning: all required and fully populated, each grounded in their actual answers.`,
+  },
+]
+
+type AnswerFeedbackEntry = BlueprintContent["answerFeedback"][number]
+
+/** One Anthropic call. Returns the parsed JSON object. */
+async function callClaudeJson<T>(systemPrompt: string, userPrompt: string, maxTokens: number, label = "leg"): Promise<T> {
+  const client = getAnthropicClient()
+  const legStart = Date.now()
   const message = await client.messages.create({
-    model: "claude-sonnet-4-6",
-    max_tokens: 16000,
-    system: BLUEPRINT_SYSTEM_PROMPT,
-    messages: [
-      {
-        role: "user",
-        content: userPrompt,
-      },
-    ],
+    model: blueprintModel(),
+    max_tokens: maxTokens,
+    system: systemPrompt,
+    messages: [{ role: "user", content: userPrompt }],
   })
 
-  // Detect truncated responses before attempting to parse
   if (message.stop_reason === "max_tokens") {
-    throw new Error("Claude response was truncated (hit max_tokens limit). Blueprint JSON is incomplete.")
+    throw new Error("Claude response was truncated (hit max_tokens limit).")
   }
 
-  // Extract the text content from the response
   const textContent = message.content.find((block) => block.type === "text")
   if (!textContent || textContent.type !== "text") {
     throw new Error("No text content in Claude response")
   }
 
-  // Strip markdown code fences if present, then parse JSON
-  let jsonText = textContent.text.trim()
-  if (jsonText.startsWith("```")) {
-    jsonText = jsonText
-      .replace(/^```json\s*/i, "")
-      .replace(/^```\s*/i, "")
-      .replace(/\s*```$/, "")
-      .trim()
+  const jsonText = extractFirstJsonObject(textContent.text)
+  if (!jsonText) {
+    throw new Error("No JSON object found in Claude response")
   }
+  console.info(
+    `[blueprint] leg ${label}: ${Date.now() - legStart}ms, ` +
+    `${message.usage.output_tokens} output tokens`
+  )
+  return JSON.parse(jsonText) as T
+}
 
-  const blueprintContent = JSON.parse(jsonText) as BlueprintContent
+/**
+ * Extracts the first balanced JSON object from a model response.
+ * Tolerates ``` fences and any trailing prose, so a chatty leg doesn't fail
+ * the whole blueprint.
+ */
+export function extractFirstJsonObject(input: string): string | null {
+  const text = input.replace(/^\s*```json\s*/i, "").replace(/^\s*```\s*/, "").replace(/```\s*$/, "").trim()
+  const start = text.indexOf("{")
+  if (start < 0) return null
 
-  return blueprintContent
+  let depth = 0
+  let inString = false
+  let escaped = false
+  for (let i = start; i < text.length; i++) {
+    const ch = text[i]
+    if (escaped) { escaped = false; continue }
+    if (ch === "\\") { escaped = true; continue }
+    if (ch === '"') { inString = !inString; continue }
+    if (inString) continue
+    if (ch === "{") depth++
+    else if (ch === "}") { depth--; if (depth === 0) return text.slice(start, i + 1) }
+  }
+  return null
+}
+
+/** Prompt for one group of feedback cards. */
+function feedbackLegPrompt(userPrompt: string, questions: string[]): string {
+  return `${userPrompt}
+
+=== THIS REQUEST: FEEDBACK CARDS ONLY ===
+Output ONLY a JSON object of exactly this shape and nothing else:
+{"answerFeedback":[{"questionNumber":"Q2","questionText":"...","answer":"...","feedback":[{"type":"strength","content":"..."}]}]}
+
+- Cover EXACTLY these questions, in this order: ${questions.join(", ")}. ${questions.length} entries, no more, no fewer.
+- Every entry needs questionNumber, questionText (the real question), answer (their quoted answer), and 2-3 feedback items.
+- Each feedback item's "content" MUST be 320-430 characters - roughly 3 full sentences. Shorter is a failure. Reference their actual answer, name the concrete consequence, and give a next action. No generic filler.
+- "type" is one of "strength", "gap", or "coaching". Include at least one "gap" across this group.
+- Do NOT output any other top-level key. No markdown fences, no commentary.`
+}
+
+/** Prompt for one narrative leg. */
+function narrativeLegPrompt(userPrompt: string, leg: (typeof NARRATIVE_LEGS)[number]): string {
+  return `${userPrompt}
+
+=== THIS REQUEST: ONE SECTION GROUP ONLY ===
+Output ONLY a JSON object with exactly these top-level keys and nothing else:
+${leg.keys.join(", ")}
+
+${leg.spec}
+- Do NOT include answerFeedback or any key not listed above - they are generated separately.
+- No markdown fences, no commentary.`
+}
+
+/**
+ * Generates blueprint content.
+ *
+ * Runs the narrative section and the four feedback groups concurrently, then
+ * merges them into a single BlueprintContent. Wall clock is the slowest leg
+ * (~15-20s) instead of the sum (~77s).
+ *
+ * A failed feedback leg degrades gracefully: its cards are dropped and the rest
+ * of the blueprint still renders. A failed narrative leg is fatal, because
+ * heroMeta/scores drive the whole page.
+ */
+export async function generateBlueprintContent(
+  quiz: Partial<QuizFormState>
+): Promise<BlueprintContent> {
+  const userPrompt = buildBlueprintUserPrompt(quiz)
+  const startedAt = Date.now()
+
+  const narrativePromises = NARRATIVE_LEGS.map((leg) =>
+    callClaudeJson<Record<string, unknown>>(
+      BLUEPRINT_SYSTEM_PROMPT,
+      narrativeLegPrompt(userPrompt, leg),
+      6000,
+      leg.label
+    )
+  )
+
+  const feedbackPromises = FEEDBACK_GROUPS.map((questions) =>
+    callClaudeJson<{ answerFeedback?: AnswerFeedbackEntry[] }>(
+      BLUEPRINT_SYSTEM_PROMPT,
+      feedbackLegPrompt(userPrompt, questions),
+      6000,
+      questions.join("/")
+    ).catch((error) => {
+      // One bad group should not cost the whole blueprint.
+      console.error(`[blueprint] feedback leg ${questions.join("/")} failed:`, error)
+      return { answerFeedback: [] as AnswerFeedbackEntry[] }
+    })
+  )
+
+  // Narrative legs are NOT caught - heroMeta/scores drive the whole page, so a
+  // failure there must surface and let the caller retry.
+  const [narrativeParts, groups] = await Promise.all([
+    Promise.all(narrativePromises),
+    Promise.all(feedbackPromises),
+  ])
+
+  const narrative = Object.assign({}, ...narrativeParts) as Omit<BlueprintContent, "answerFeedback">
+
+  // Preserve question order across groups - the page renders them in sequence.
+  const answerFeedback = groups.flatMap((g) => g.answerFeedback ?? [])
+
+  console.info(
+    `[blueprint] generated in ${Date.now() - startedAt}ms via ${blueprintModel()} ` +
+    `(${NARRATIVE_LEGS.length + FEEDBACK_GROUPS.length} parallel legs, ${answerFeedback.length} cards)`
+  )
+
+  return { ...narrative, answerFeedback } as BlueprintContent
 }
